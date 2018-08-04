@@ -1,0 +1,11 @@
+---
+:adhoc:
+  :transport:
+  - :carpool
+  :study:
+  - :acim
+  - :class
+  :real_estate:
+  - :board
+  - :group_rental
+:site: {}

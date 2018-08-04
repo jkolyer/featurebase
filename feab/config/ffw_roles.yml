@@ -1,0 +1,9 @@
+---
+:site:
+- :anon
+- :admin:
+    :subscriber: :person
+:adhoc:
+  :owner:
+    :leader:
+      :member: :observer
