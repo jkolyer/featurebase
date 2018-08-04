@@ -12,7 +12,7 @@ function goportal {
 }
 
 function run_feab_admin {
-    cd $FEAB_PORTAL
+    gofeab
     bin/rails s -b 10.0.0.198 -p 3002
 }
 
