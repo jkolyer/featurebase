@@ -11,7 +11,7 @@ ActiveAdmin.register Feab::FeatureElement do
     end
 
     def find_resource
-      scoped_collection.send :find_by_mnemonic, params[:id]
+      Feab::FeatureElement.find_by_mnemonic(params[:id])
     end
     
   end
@@ -43,7 +43,7 @@ ActiveAdmin.register Feab::FeatureElement do
       row :feab_version
     end
 
-    panel "Scenarios" do
+    panel "Children" do
       table_for resource.child_records do
         column :mnemonic
         column :name
@@ -51,6 +51,9 @@ ActiveAdmin.register Feab::FeatureElement do
           felem.content['source_name']
         end
         column :feab_version
+        column :id do |felem|
+          link_to felem, resource_path(felem), class: "resource_id_link"
+        end
       end
     end
     
