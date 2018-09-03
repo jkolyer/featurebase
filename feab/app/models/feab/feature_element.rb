@@ -23,6 +23,8 @@ module Feab
                 slug_column: :mnemonic,
                 scope: :role
 
+    has_many_attached :images
+
     def create_mnemonic
       Role.feature_element_mnemonic(domain_space.mnemonic,
                                          role.mnemonic,
