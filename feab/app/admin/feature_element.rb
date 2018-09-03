@@ -1,5 +1,5 @@
 
-ActiveAdmin.register Feab::FeatureElement do
+ActiveAdmin.register Feab::FeatureElement, as: 'Feature' do
 
   config.filters = false
   config.per_page = 100
