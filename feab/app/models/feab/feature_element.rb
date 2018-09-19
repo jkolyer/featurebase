@@ -3,7 +3,8 @@ require 'friendly_id'
 module Feab
   class FeatureElement < Element
     TYPE_FEATURE = 'Feature'
-    
+
+    include AASM
     include Feab::Family
     
     belongs_to :role,
@@ -24,6 +25,13 @@ module Feab
                 scope: :role
 
     has_many_attached :images
+
+    aasm(:lifecycle) do
+      state :develop, initial: true
+      state :staging
+      state :production
+      state :deprecated
+    end
 
     def create_mnemonic
       Role.feature_element_mnemonic(domain_space.mnemonic,

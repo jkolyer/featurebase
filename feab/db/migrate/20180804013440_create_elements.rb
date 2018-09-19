@@ -15,7 +15,9 @@ class CreateElements < ActiveRecord::Migration[5.2]
       t.uuid :related_element_id
 
       t.jsonb :json_content, null: false, default: '{}'
-      
+
+      t.string :lifecycle
+
       t.timestamps
     end
     
@@ -24,6 +26,8 @@ class CreateElements < ActiveRecord::Migration[5.2]
     add_index(:feab_elements, :parent_id)
     add_index(:feab_elements, :domain_id)
     add_index(:feab_elements, :related_element_id)
+    add_index(:feab_elements, :feab_version)
+    add_index(:feab_elements, :lifecycle)
 
   end
 end

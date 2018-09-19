@@ -78,6 +78,7 @@ ActiveRecord::Schema.define(version: 2018_09_03_222452) do
     t.uuid "domain_id"
     t.uuid "related_element_id"
     t.jsonb "json_content", default: "{}", null: false
+    t.string "lifecycle"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["domain_id"], name: "index_feab_elements_on_domain_id"

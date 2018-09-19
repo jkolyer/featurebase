@@ -58,6 +58,7 @@ gem 'draper'
 gem 'pundit'
 gem 'friendly_id'
 gem 'paper_trail'
+gem 'aasm'
 
 gem 'rspec-rails', group: [:development, :test]
 
