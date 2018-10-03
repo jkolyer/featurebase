@@ -39,30 +39,30 @@ The system is accessed through an administraion portal and a JSON API; it integr
   </tr>
     <tr>
         <td>Product Manager</td>
-      <td>
+      <td> <!-- concept -->
         <ul>
         <li>Feature definition</li>
         <li>Admin interface</li>
         </ul>
       </td>
-      <td>
+      <td> <!-- develop -->
         <ul>
         </ul>
       </td>
-      <td>
+      <td> <!-- staged -->
         <ul>
         <li>Gradual roll-out</li>
         <li>A/B testing</li>
         </ul>
       </td>
-      <td>
+      <td> <!-- production -->
         <ul>
         <li>Analytics</li>
         <li>A/B testing</li>
         <li>User support</li>
         </ul>
       </td>
-      <td>
+      <td> <!-- deprecated -->
         <ul>
         <li>Replacement planning</li>
         </ul>
@@ -72,14 +72,16 @@ The system is accessed through an administraion portal and a JSON API; it integr
         <td>Developer</td> <!-- user role -->
       <td> <!-- concept -->
         <ul>
-        <li>Build-time integration</li>
-        <li>Feature toggle</li>
         <li>JSON representation of feature data</li>
+        <li>Automated test templates</li>
+        <li>Component mappings</li>
+        <li>Dependencies</li>
         </ul>
       </td>
       <td><!-- develop -->
         <ul>
-        <li>Automated test templates</li>
+        <li>Build-time integration</li>
+        <li>Feature toggles</li>
         </ul>
       </td> 
       <td> <!-- staged -->
@@ -105,6 +107,7 @@ The system is accessed through an administraion portal and a JSON API; it integr
       </td>
       <td><!-- develop -->
         <ul>
+          <li>Verification</li>
         </ul>
       </td> 
       <td> <!-- staged -->
@@ -114,6 +117,7 @@ The system is accessed through an administraion portal and a JSON API; it integr
       </td>
       <td> <!-- production -->
         <ul>
+          <li>Bug tracking</li>
         </ul>
       </td>
       <td> <!-- deprecated -->
