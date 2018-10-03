@@ -1,6 +1,7 @@
 # FeatureBase
-
-## Managing the feature lifecycle [PROTOTYPE]
+ [PROTOTYPE]
+ 
+## Managing the feature lifecycle
 
 FeatureBase is a Rails app designed to manage the entire feature lifecycle, from conception through maintainence, versioning and deprecation.  
 
@@ -164,7 +165,7 @@ The system is designed as a stand-alone app that's accessible by developers, and
 
 The primary entities allow nested hierarchial relationships:  <i>Features</i>, <i>Roles</i>, <i>Domains</i>.
 
-#### Feature
+#### Features
 
 <ul>
   <li>Authentication
@@ -181,7 +182,7 @@ The primary entities allow nested hierarchial relationships:  <i>Features</i>, <
 </ul>
 
 
-#### Role
+#### Roles
 These are the intended user roles for a given feature.  In the following example, a <i>premium user</i> inherits from the <i>user</i> role, and the <i>admin</i> inherits from the former.  
 <ul>
   <li>User:  authenticated user with basic feature access
@@ -196,7 +197,7 @@ These are the intended user roles for a given feature.  In the following example
   <li>Guest:  an unauthenticated user</li>
 </ul>
 
-#### Domain
+#### Domains
 Domains capture groupings of features.  For example, the <i>Site</i> domain represents features that are not unique to your given business app; these are features users expect to see on most apps.  <i>Basic</i> domain covers fundamental features provided by your business; these might be what a free user would expect with a freemium app.  
 
 <ul>
