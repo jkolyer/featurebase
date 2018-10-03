@@ -78,10 +78,12 @@ ActiveRecord::Schema.define(version: 2018_09_03_222452) do
     t.uuid "domain_id"
     t.uuid "related_element_id"
     t.jsonb "json_content", default: "{}", null: false
-    t.string "lifecycle"
+    t.string "aasm_state"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["aasm_state"], name: "index_feab_elements_on_aasm_state"
     t.index ["domain_id"], name: "index_feab_elements_on_domain_id"
+    t.index ["feab_version"], name: "index_feab_elements_on_feab_version"
     t.index ["mnemonic"], name: "index_feab_elements_on_mnemonic", unique: true
     t.index ["parent_id"], name: "index_feab_elements_on_parent_id"
     t.index ["related_element_id"], name: "index_feab_elements_on_related_element_id"

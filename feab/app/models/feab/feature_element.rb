@@ -26,11 +26,25 @@ module Feab
 
     has_many_attached :images
 
-    aasm(:lifecycle) do
-      state :develop, initial: true
-      state :staging
+    aasm do
+      state :concept, initial: true
+      state :develop
+      state :stage
       state :production
-      state :deprecated
+      state :deprecate
+
+      event :conceive do
+        transitions from: :concept, to: :develop
+      end
+      event :staging do
+        transitions from: :develop, to: :stage
+      end
+      event :go_live do
+        transitions from: :stage, to: :production
+      end
+      event :retire do
+        transitions from: :production, to: :deprecate
+      end
     end
 
     def create_mnemonic
