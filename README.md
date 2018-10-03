@@ -24,7 +24,7 @@ This table describes how product team members will interact with the FeatureBase
 <table>
   <tr>
     <td>
-      Team Member
+      Member Role
   </td>
     <td>
       Concept
