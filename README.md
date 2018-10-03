@@ -10,7 +10,7 @@ The system is accessed through an administration portal, a JSON API, and in-memo
 Feature lifecycle stages are defined as 
 <ol><li>concept</li>
   <li>develop</li>
-  <li>staged</li>
+  <li>stage</li>
   <li>production</li>
   <li>deprecate</li>
 </ol>
@@ -27,7 +27,7 @@ Feature lifecycle stages are defined as
       Develop
   </td>
     <td>
-      Staged
+      Stage
   </td>
     <td>
       Production
