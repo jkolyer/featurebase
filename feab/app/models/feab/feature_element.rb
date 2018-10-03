@@ -27,23 +27,23 @@ module Feab
     has_many_attached :images
 
     aasm do
-      state :concept, initial: true
-      state :develop
-      state :stage
+      state :conception, initial: true
+      state :development
+      state :staging
       state :production
-      state :deprecate
+      state :deprecated
 
       event :conceive do
-        transitions from: :concept, to: :develop
+        transitions from: :conception, to: :development
       end
-      event :staging do
-        transitions from: :develop, to: :stage
+      event :trial do
+        transitions from: :development, to: :staging
       end
-      event :go_live do
-        transitions from: :stage, to: :production
+      event :live do
+        transitions from: :staging, to: :production
       end
       event :retire do
-        transitions from: :production, to: :deprecate
+        transitions from: :production, to: :deprecated
       end
     end
 

@@ -5,43 +5,41 @@ require 'byebug'
 
 module Feab
   RSpec.describe FeatureElement, type: :model do
-
-    describe 'evaluating feature roles' do
-      let(:feab_version) {
-        '0.1.0'
+    let(:feab_version) {
+      '0.1.0'
+    }
+    let(:site_roles) {
+      [ :anon, admin: { subscriber: :person } ]
+    }
+    let(:adhoc_roles) {
+      { owner: { leader: { member: :observer } } }
+    }
+    let(:config) {
+      {
+        :site => site_roles,
+        :adhoc => adhoc_roles
       }
-      let(:site_roles) {
-        [ :anon, admin: { subscriber: :person } ]
+    }
+    let(:feature_tree) {
+      {
+        anon: ['view landing page',
+               { 'login to the site' => [
+                   { 'view login page' => [
+                       'enter login information',
+                       'view forgot password page'
+                     ]
+                   },
+                   { 'view register page' => [
+                       'enter registration information',
+                     ]
+                   }
+                 ]
+               },
+              ],
       }
-      let(:adhoc_roles) {
-        { owner: { leader: { member: :observer } } }
-      }
-      let(:config) {
-        {
-          :site => site_roles,
-          :adhoc => adhoc_roles
-        }
-      }
-      let(:feature_tree) {
-        {
-          anon: ['view landing page',
-                 { 'login to the site' => [
-                     { 'view login page' => [
-                         'enter login information',
-                         'view forgot password page'
-                       ]
-                     },
-                     { 'view register page' => [
-                         'enter registration information',
-                       ]
-                     }
-                   ]
-                 },
-                ],
-        }
-      }
-      let(:feature_doc) {
-        fdoc =<<DOC
+    }
+    let(:feature_doc) {
+      fdoc =<<DOC
 #
 @ffw_version_0.1.0
 @top_level_feature:<cmpt>
@@ -68,9 +66,9 @@ Feature:  Feature Framework
     When Bar123
     Then FooBar321
 DOC
-      }
-      let(:feature_doc_v2) {
-        fdoc =<<DOC
+    }
+    let(:feature_doc_v2) {
+      fdoc =<<DOC
 #{feature_doc}
 
 @third_scenario:<cmpt>
@@ -80,19 +78,20 @@ Scenario: Scenario Number 3
   When BarBar
   Then FooBarFooBar
 DOC
-      }
-      
-      def loaded_feature(doc)
-        fdoc = Gherkin::Parser.new.parse(doc)
-        role = Role.mnemonic(:anon)
-        role.load_feature_doc(fdoc, 'filename')
-      end
+    }
+    
+    def loaded_feature(doc)
+      fdoc = Gherkin::Parser.new.parse(doc)
+      role = Role.mnemonic(:anon)
+      role.load_feature_doc(fdoc, 'filename')
+    end
 
-      before do
-        allow(Role).to receive(:role_configuration) { config }
-        Role.add_roles!(config)
-      end
+    before do
+      allow(Role).to receive(:role_configuration) { config }
+      Role.add_roles!(config)
+    end
 
+    describe 'evaluating feature roles' do
       it 'features loaded properly' do
         feature = Role.mnemonic(:anon).make_feature({ name: 'My First Feature',
                                                            feab_version: feab_version})
@@ -189,5 +188,32 @@ DOC
       end
 
     end
+
+    describe 'feature states' do
+      let(:state_root) {
+        loaded_feature(feature_doc)
+      }
+      it 'starts in conception state' do
+        expect(state_root.conception?).to eq(true)
+      end
+      
+      it 'transitions through states' do
+        feature = state_root
+        
+        feature.conceive!
+        expect(feature.development?).to eq(true)
+        
+        feature.trial!
+        expect(feature.staging?).to eq(true)
+        
+        feature.live!
+        expect(feature.production?).to eq(true)
+        
+        feature.retire!
+        expect(feature.deprecated?).to eq(true)
+      end
+      
+    end
+    
   end
 end
