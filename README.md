@@ -14,7 +14,7 @@ The app works as an in-house system supporting all stages of feature development
   <li>deprecate</li>
 </ol>
 
-The system is accessed through an administraion portal and a JSON API; it integrates with external systems such as JIRA, github, and analytics tools.  The portal is used by product managers primarily, and the API by technical team members.  
+The system is accessed through an administration portal and a JSON API; it integrates with external systems such as JIRA, github, and analytics tools.  The portal is used by product managers, developers and QA, and the API by technical team members.  The portal captures feature definitions, screen designs, status, and development components.  
 
 <table>
   <tr>
@@ -130,6 +130,7 @@ The system is accessed through an administraion portal and a JSON API; it integr
       <td> <!-- concept -->
         <ul>
         <li>Deployment strategy</li>
+        <li>Runtime requirements</li>
         </ul>
       </td>
       <td><!-- develop -->
@@ -138,6 +139,7 @@ The system is accessed through an administraion portal and a JSON API; it integr
       </td> 
       <td> <!-- staged -->
         <ul>
+        <li>Runtime integration</li>
         </ul>
       </td>
       <td> <!-- production -->
@@ -151,4 +153,60 @@ The system is accessed through an administraion portal and a JSON API; it integr
       </td>
   </tr>
 </table>
+
+## Implemetation Details
+
+Feature data can be managed to fit into a small memory footprint.  This allows ease of use for developers, and fast, flexible availability at runtime in production.  
+
+### System Access
+
+The system is designed as a stand-alone app that's accessible by developers, and at runtime in a production system.  At build time developers can integrate JSON API calls to extract feature toggle, which can be inserted into code.  
+
+### DB Schema
+
+The primary entities allow nested hierarchial relationships:  <i>Features</i>, <i>Roles</i>, <i>Domains</i>.
+
+#### Feature
+
+<ul>
+  <li>Authentication
+  <ul>
+    <li>Login</li>
+    <li>Registration
+      <ul>
+        <li>Confirmation</li>
+       </ul>
+    </li>
+    <li>Forgot Password</li>
+  </ul>
+  </li>
+</ul>
+
+
+#### Role
+These are the intended user roles for a given feature.  In the following example, a <i>premium user</i> inherits from the <i>user</i> role, and the <i>admin</i> inherits from the former.  
+<ul>
+  <li>User:  authenticated user with basic feature access
+  <ul>
+    <li>Premium User:  authenticated user will full feature access
+    <ul>
+      <li>Admin:  super user privileges</li>
+     </ul>
+    </li>
+   </ul>
+   </li>
+  <li>Guest:  an unauthenticated user</li>
+</ul>
+
+#### Domain
+Domains capture groupings of features.  For example
+
+<ul>
+  <li>Site:  baseline features most apps support (e.g., authentication, navigation)</li>
+  <li>Basic:  feature set for intro product offering
+    <ol>
+      <li>Premium:  paid-for features</li>
+    </ol>
+  </li>
+</ul>
 
