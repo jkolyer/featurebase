@@ -154,7 +154,7 @@ The system is accessed through an administration portal and a JSON API; it integ
   </tr>
 </table>
 
-## Implemetation Details
+## Implementation Details
 
 Feature data can be managed to fit into a small memory footprint.  This allows ease of use for developers, and fast, flexible availability at runtime in production.  
 
