@@ -1,5 +1,5 @@
 # FeatureBase
-[THIS APP IS A <b>PROTOTYPE</b>]
+[<b>PROTOTYPE</b>]
  
 ## Managing the feature lifecycle
 
