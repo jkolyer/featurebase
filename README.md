@@ -7,7 +7,7 @@ FeatureBase is a Rails app designed to manage the entire feature lifecycle, from
 
 The system is accessed through an administration portal, a JSON API, and in-memory databases.  It integrates with external systems such as JIRA, github, and analytics tools.  The admin portal captures feature definitions, screen designs, status, and development components, and can serve as a live dashboard of feature performance.  The API can be used by developers and QA for build/test, and devops in production.  
 
-Features are associated with a given application <i>Role</i> and functional <i>Domain</i>.  Roles describe the type of user acting on your system; domains group your features along functional lines.  These are discussed below.
+Features are associated with a given application <i>Role</i> and functional <i>Domain</i>.  <i>Roles</i> describe the type of user acting on your system; <i>domains</i> group your features along functional lines.  They are discussed below.
 
 Feature lifecycle stages are defined as 
 <ol><li>conception</li>
@@ -19,7 +19,7 @@ Feature lifecycle stages are defined as
 
 ### Team Members
 
-This table describes how product team members will interact with the FeatureBase system.
+This table describes how product team members will interact with the FeatureBase system over the lifecycle stages.
 
 <table>
   <tr>
