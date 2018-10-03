@@ -144,6 +144,7 @@ Feature lifecycle stages are defined as
       <td> <!-- production -->
         <ul>
         <li>Measurement</li>
+        <li>Runtime access</li>
         </ul>
       </td>
       <td> <!-- deprecated -->
