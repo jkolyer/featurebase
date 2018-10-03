@@ -10,11 +10,11 @@ The system is accessed through an administration portal, a JSON API, and in-memo
 Features are associated with a given application <i>Role</i> and functional <i>Domain</i>.  Roles describe the type of user acting on your system; domains group your features along functional lines.  These are discussed below.
 
 Feature lifecycle stages are defined as 
-<ol><li>concept</li>
-  <li>develop</li>
-  <li>stage</li>
+<ol><li>conception</li>
+  <li>development</li>
+  <li>staging</li>
   <li>production</li>
-  <li>deprecate</li>
+  <li>deprecated</li>
 </ol>
 
 ### Team Members
@@ -27,19 +27,19 @@ This table describes how product team members will interact with the FeatureBase
       Member Role
   </td>
     <td>
-      Concept
+      Conception
   </td>
     <td>
-      Develop
+      Development
   </td>
     <td>
-      Stage
+      Staging
   </td>
     <td>
       Production
   </td>
     <td>
-      Deprecate
+      Deprecated
   </td>
   </tr>
     <tr>
