@@ -160,7 +160,7 @@ Feature data can be managed to fit into a small memory footprint.  This allows e
 
 ### System Access
 
-The system is designed as a stand-alone app that's accessible by developers, and at runtime in a production system.  At build time developers can integrate JSON API calls to extract feature toggle, which can be inserted into code.  
+The system is designed as a stand-alone app that's accessible by developers, and at runtime in a production system.  At build time developers can integrate JSON API calls to extract feature toggle, for example, which can be inserted into code.  At runtime feature data can be loaded into memory, accessible by production system through Redis, for example.  
 
 ### DB Schema
 
