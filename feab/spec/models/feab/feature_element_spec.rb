@@ -212,6 +212,15 @@ DOC
         feature.retire!
         expect(feature.deprecated?).to eq(true)
       end
+
+      it 'updates child states' do
+        feature = state_root
+        feature.conceive!
+        
+        feature.child_records.each do |child|
+          expect(child.development?).to eq(true)
+        end
+      end  
       
     end
     

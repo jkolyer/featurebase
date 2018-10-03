@@ -34,17 +34,34 @@ module Feab
       state :deprecated
 
       event :conceive do
+        after do
+          child_records.each { |child| child.conceive! }
+        end
         transitions from: :conception, to: :development
       end
       event :trial do
+        after do
+          child_records.each { |child| child.trial! }
+        end
         transitions from: :development, to: :staging
       end
       event :live do
+        after do
+          child_records.each { |child| child.live! }
+        end
         transitions from: :staging, to: :production
       end
       event :retire do
+        after do
+          child_records.each { |child| child.retire! }
+        end
         transitions from: :production, to: :deprecated
       end
+
+      after_all_transitions :did_transition_lifecycle
+    end
+
+    def did_transition_lifecycle
     end
 
     def create_mnemonic
