@@ -1,39 +1,45 @@
 # FeatureBase
 [<b>PROTOTYPE</b>]
  
-## Managing the feature lifecycle
+## Managing the Feature Lifecycle
 
 FeatureBase is a Rails app designed to manage the entire feature lifecycle, from conception through maintainence, versioning and deprecation.  The app works as an in-house system supporting all stages of feature development, used by product managers, developers, QA, and devops.  
 
-The system is accessed through an administration portal, a JSON API, and in-memory databases.  It integrates with external systems such as JIRA, github, and analytics tools.  The portal is used by product managers, developers and QA, and the API by technical team members.  The portal captures feature definitions, screen designs, status, and development components.  The portal can also serve as a live dashboard of individual feature performance.  
+The system is accessed through an administration portal, a JSON API, and in-memory databases.  It integrates with external systems such as JIRA, github, and analytics tools.  The admin portal captures feature definitions, screen designs, status, and development components, and can serve as a live dashboard of feature performance.  The API can be used by developers and QA for build/test, and devops in production.  
+
+Features are associated with a given application <i>Role</i> and functional <i>Domain</i>.  Roles describe the type of user acting on your system; domains group your features along functional lines.  These are discussed below.
 
 Feature lifecycle stages are defined as 
-<ol><li>concept</li>
-  <li>develop</li>
-  <li>stage</li>
+<ol><li>conception</li>
+  <li>development</li>
+  <li>staging</li>
   <li>production</li>
-  <li>deprecate</li>
+  <li>deprecated</li>
 </ol>
+
+### Team Members
+
+This table describes how product team members will interact with the FeatureBase system.
 
 <table>
   <tr>
     <td>
-      User Role
+      Member Role
   </td>
     <td>
-      Concept
+      Conception
   </td>
     <td>
-      Develop
+      Development
   </td>
     <td>
-      Stage
+      Staging
   </td>
     <td>
       Production
   </td>
     <td>
-      Deprecate
+      Deprecated
   </td>
   </tr>
     <tr>
@@ -106,7 +112,7 @@ Feature lifecycle stages are defined as
       </td>
       <td><!-- develop -->
         <ul>
-          <li>Verification</li>
+          <li>Feature verification</li>
         </ul>
       </td> 
       <td> <!-- staged -->
@@ -164,9 +170,11 @@ The system is designed as a stand-alone app that's accessible by developers, and
 
 ### DB Schema
 
-The primary entities allow nested hierarchial relationships:  <i>Features</i>, <i>Roles</i>, <i>Domains</i>.
+The primary entities allow nested hierarchical relationships:  <i>Features</i>, <i>Roles</i>, <i>Domains</i>.
 
 #### Features
+
+A prototypical example of hiearchical feature is user authentication.  This is represented as a top-level feature, with children representing feature sub-sets.  
 
 <ul>
   <li>Authentication
