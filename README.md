@@ -20,7 +20,7 @@ Feature lifecycle stages are defined as
 <table>
   <tr>
     <td>
-      User Role
+      Team Role
   </td>
     <td>
       Concept
