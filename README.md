@@ -1,19 +1,19 @@
 # FeatureBase
- [PROTOTYPE]
+[THIS APP IS A <b>PROTOTYPE</b>]
  
 ## Managing the feature lifecycle
 
-FeatureBase is a Rails app designed to manage the entire feature lifecycle, from conception through maintainence, versioning and deprecation.  
+FeatureBase is a Rails app designed to manage the entire feature lifecycle, from conception through maintainence, versioning and deprecation.  The app works as an in-house system supporting all stages of feature development, used by product managers, developers, QA, and devops.  
 
-The app works as an in-house system supporting all stages of feature development, used by product managers, developers, QA, and devops. Feature lifecycle stages are defined as 
+The system is accessed through an administration portal, a JSON API, and in-memory databases.  It integrates with external systems such as JIRA, github, and analytics tools.  The portal is used by product managers, developers and QA, and the API by technical team members.  The portal captures feature definitions, screen designs, status, and development components.  The portal can also serve as a live dashboard of individual feature performance.  
+
+Feature lifecycle stages are defined as 
 <ol><li>concept</li>
   <li>develop</li>
   <li>staged</li>
   <li>production</li>
   <li>deprecate</li>
 </ol>
-
-The system is accessed through an administration portal and a JSON API; it integrates with external systems such as JIRA, github, and analytics tools.  The portal is used by product managers, developers and QA, and the API by technical team members.  The portal captures feature definitions, screen designs, status, and development components.  
 
 <table>
   <tr>
