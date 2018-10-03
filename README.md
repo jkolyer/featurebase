@@ -170,9 +170,11 @@ The system is designed as a stand-alone app that's accessible by developers, and
 
 ### DB Schema
 
-The primary entities allow nested hierarchial relationships:  <i>Features</i>, <i>Roles</i>, <i>Domains</i>.
+The primary entities allow nested hierarchical relationships:  <i>Features</i>, <i>Roles</i>, <i>Domains</i>.
 
 #### Features
+
+A prototypical example of hiearchical feature is user authentication.  This is represented as a top-level feature, with children representing feature sub-sets.  
 
 <ul>
   <li>Authentication
