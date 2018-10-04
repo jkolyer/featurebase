@@ -174,7 +174,7 @@ The primary entities allow nested hierarchical relationships:  <i>Features</i>, 
 
 #### Features
 
-A prototypical example of hiearchical feature is user authentication.  This is represented as a top-level feature, with children representing feature sub-sets.  
+A prototypical example of a hiearchical feature is user authentication.  This is represented as a general top-level feature, with children representing more detailed granularity.  
 
 <ul>
   <li>Authentication
