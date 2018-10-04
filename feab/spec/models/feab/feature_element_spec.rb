@@ -94,7 +94,7 @@ DOC
     describe 'evaluating feature roles' do
       it 'features loaded properly' do
         feature = Role.mnemonic(:anon).make_feature({ name: 'My First Feature',
-                                                           feab_version: feab_version})
+                                                      feab_version: feab_version})
         expect(feature.mnemonic).to eq('site_anon_v0-1-0-my-first-feature')
         expect(feature.feab_version).to eq(feab_version)
       end
@@ -102,8 +102,8 @@ DOC
       it 'loads feature tree' do
         feature_tree.each do |role, features|
           features = Role.mnemonic(role).load_feature_tree(features,
-                                                                nil,
-                                                                feab_version)
+                                                           nil,
+                                                           feab_version)
           expect(features.first.feab_version).to eq(feab_version)
           
           second = features.last
@@ -116,6 +116,8 @@ DOC
           
           view_register = second.child_records.last
           expect(view_register.mnemonic).to eq('site_anon_v0-1-0-view-register-page')
+          
+          expect(view_register.feab_version).to eq(feab_version)
         end
       end
       
@@ -221,6 +223,19 @@ DOC
           expect(child.development?).to eq(true)
         end
       end  
+    end
+
+    describe 'feature versions' do
+      let(:feature_root) {
+        loaded_feature(feature_doc)
+      }
+      
+      it 'creates FeatureVersion instance' do
+        root = feature_root
+        fv = FeatureVersion.create(root.feab_version)
+        expect(root.feature_version).to eq(fv)
+        expect(root.child_records.first.feature_version).to eq(fv)
+      end
       
     end
     

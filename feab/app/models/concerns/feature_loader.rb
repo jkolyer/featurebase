@@ -2,6 +2,12 @@ module FeatureLoader
   extend ActiveSupport::Concern
 
   included do
+
+    DEFAULT_VERSION = '0.0.0'
+
+    def self.feab_version(args)
+      args[:feab_version] || DEFAULT_VERSION
+    end
     
     def self.feature_element_mnemonic(mne_domain, mne_role, feab_version, name)
       "#{mne_domain}_#{mne_role}_v#{feab_version} #{name}"
@@ -14,16 +20,16 @@ module FeatureLoader
         end
         nil
       end
-      version ? $1 : '0.0.0'
+      version ? $1 : DEFAULT_VERSION
     end
 
   end
   
   def find_or_create_feature_element(args)
     feature = Feab::FeatureElement.where(name: args[:name],
-                                              feab_version: args[:feab_version],
-                                              domain_space: self.domain_space,
-                                              role: self).
+                                         feab_version: self.class.feab_version(args),
+                                         domain_space: self.domain_space,
+                                         role: self).
               limit(1).
               first
     
@@ -65,16 +71,16 @@ module FeatureLoader
   end
 
   def make_feature(args)
-    Feab::FeatureElement.create(name: args[:name],
-                                     feab_version: args[:feab_version],
+    ff = Feab::FeatureElement.create(name: args[:name],
+                                     feab_version: self.class.feab_version(args),
                                      domain_space: self.domain_space,
                                      role: self,
                                      parent_record: args[:parent])
+    ff
   end
 
-  def load_feature_tree(features_array, parent=nil, feab_version=nil)
+  def load_feature_tree(features_array, parent=nil, feab_version=DEFAULT_VERSION)
     features = []
-    
     features_array.each do |feature|
       if feature.is_a? String
         features << self.make_feature({ name: feature,
