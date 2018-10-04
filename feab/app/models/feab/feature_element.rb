@@ -115,7 +115,19 @@ module Feab
     end
 
     def feature_version= version_obj
-      self.feab_version = version_obj.to_s
+      feab_v = version_obj.to_s
+      self.feab_version = feab_v
+      save!
+      
+      child_records.each do |child|
+        child.feab_version = feab_v
+        child.save!
+      end
+    end
+
+    def bump_version(part=FeatureVersion::PATCH)
+      new_version = feature_version.bump_part(part)
+      feature_version = new_version
     end
 
   end
