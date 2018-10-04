@@ -164,7 +164,7 @@ This table describes how product team members will interact with the FeatureBase
 
 ### System Access
 
-The system is designed as a stand-alone app that's accessible by product managers and developers, and at runtime in a production system.  At build time developers can integrate JSON API calls to extract feature toggle, for example, which can be inserted into code.  At runtime feature data can be loaded into memory, accessible by production system through Redis, for example.  Product managers would require a more complex user interface, which is not part of the prototype milestone for this project.
+The system is designed as a stand-alone app that's accessible by product managers and developers, and at runtime in a production system.  At build time developers can integrate JSON API calls to extract feature toggle, for example, which can be inserted into code.  At runtime feature data can be loaded into memory, accessible by production system through Redis, for example.  Product managers would require a more complex user interface, which is not part of the prototype milestone for this project ([ActiveAdmin](https://activeadmin.info) is good enough for now).
 
 Feature data can be managed to fit into a small memory footprint.  This allows ease of use for developers, and fast, flexible availability at runtime in production.  
 
