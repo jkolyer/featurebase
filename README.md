@@ -162,13 +162,13 @@ This table describes how product team members will interact with the FeatureBase
 
 ## Implementation Details
 
-Feature data can be managed to fit into a small memory footprint.  This allows ease of use for developers, and fast, flexible availability at runtime in production.  
-
-Internally features are formatted using the [Gherkin domain language](https://docs.cucumber.io/gherkin/reference/), which is used as an interim input technique (until a user interface for browsing and editing can be developed).  This approach is also useful for testing and prototyping purposes, as we can include annotations for expressing more feature details.
-
 ### System Access
 
 The system is designed as a stand-alone app that's accessible by developers, and at runtime in a production system.  At build time developers can integrate JSON API calls to extract feature toggle, for example, which can be inserted into code.  At runtime feature data can be loaded into memory, accessible by production system through Redis, for example.  
+
+Feature data can be managed to fit into a small memory footprint.  This allows ease of use for developers, and fast, flexible availability at runtime in production.  
+
+Internally features are formatted using the [Gherkin domain language](https://docs.cucumber.io/gherkin/reference/), which is used as an interim input technique (until a user interface for browsing and editing can be developed).  This approach is also useful for testing and prototyping purposes, as we can include annotations for expressing more feature details.
 
 ### DB Schema
 
