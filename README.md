@@ -164,7 +164,7 @@ This table describes how product team members will interact with the FeatureBase
 
 Feature data can be managed to fit into a small memory footprint.  This allows ease of use for developers, and fast, flexible availability at runtime in production.  
 
-Internally features are formatted using the [Gherkin domain language](https://docs.cucumber.io/gherkin/reference/), which is used as one input technique, and allows us to add custom annotations.  This approach is useful for testing purposes, but cannot replace a rich user interface for browsing and editing (given the [PROTOTYPE] stage of this project, it is a good starting point).
+Internally features are formatted using the [Gherkin domain language](https://docs.cucumber.io/gherkin/reference/), which is used as an interim input technique (until a user interface for browsing and editing can be developed).  This approach is also useful for testing and prototyping purposes.
 
 ### System Access
 
