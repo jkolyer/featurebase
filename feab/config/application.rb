@@ -32,6 +32,8 @@ module Feab
 
     # Store files locally.
     config.active_storage.service = :local
+
     
+    config.generators.javascript_engine = :js    
   end
 end
