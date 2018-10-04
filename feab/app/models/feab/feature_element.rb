@@ -110,6 +110,14 @@ module Feab
       role.mnemonic
     end
 
+    def version
+      Gem::Version.create(self.feab_version)
+    end
+
+    def version= version_obj
+      self.feab_version = version_obj.to_s
+    end
+
   end
 end
 
