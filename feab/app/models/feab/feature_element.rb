@@ -123,11 +123,12 @@ module Feab
         child.feab_version = feab_v
         child.save!
       end
+      version_obj
     end
 
     def bump_version(part=FeatureVersion::PATCH)
       new_version = feature_version.bump_part(part)
-      feature_version = new_version
+      self.feature_version = new_version
     end
 
   end

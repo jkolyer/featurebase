@@ -237,6 +237,16 @@ DOC
         expect(root.child_records.first.feature_version).to eq(fv)
       end
       
+      it 'bumps FeatureVersion children' do
+        root = feature_root
+        orig_feabv = FeatureVersion.create(root.feab_version)
+
+        FeatureVersion::PART_IDX.each do |part|
+          bump_feabv = root.bump_version(part)
+          expect(root.feab_version).to eq(bump_feabv.to_s)
+          expect(root.child_records.first.feab_version).to eq(bump_feabv.to_s)
+        end
+      end
     end
     
   end
