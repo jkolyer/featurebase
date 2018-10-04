@@ -1,5 +1,3 @@
-require 'byebug'
-
 class FeatureVersion < Gem::Version
   MAJOR = :major
   MINOR = :minor
