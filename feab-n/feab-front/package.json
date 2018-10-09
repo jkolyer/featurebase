@@ -3,18 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "bootstrap": "4",
+    "flow-bin": "^0.82.0",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
-    "react-scripts": "2.0.4"
+    "react-scripts": "2.0.4",
+    "reactstrap": "^6.5.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+      "eject": "react-scripts eject",
+      "flow": "flow"
   },
-    "proxy": "http://localhost:3001",
-    "eslintConfig": {
+  "proxy": "http://localhost:3001",
+  "eslintConfig": {
     "extends": "react-app"
   },
   "browserslist": [
