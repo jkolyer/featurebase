@@ -4,7 +4,7 @@ export FEAB_ENV=$BIN_DIR/..
 export FEAB_PORTAL=$FEAB_ENV
 
 function gofeab {
-    cd $FEAB_PORTAL/feab
+    cd $FEAB_PORTAL/feab-r
 }
 
 function goportal {

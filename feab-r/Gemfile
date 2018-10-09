@@ -59,7 +59,9 @@ gem 'pundit'
 gem 'friendly_id'
 gem 'paper_trail'
 gem 'aasm'
+
 # gem 'will_paginate'
+# gem 'simple_form'
 
 gem 'react-rails'
 gem "slim-rails"
