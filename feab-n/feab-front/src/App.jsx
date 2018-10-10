@@ -59,11 +59,17 @@ class App extends Component<Props, State> {
 		    </NavItem>
 		    <UncontrolledDropdown nav inNavbar>
 		      <DropdownToggle nav caret>
-		        Options
+		        Users
 	              </DropdownToggle>
 		      <DropdownMenu right>
-		        <DropdownItem>Option 1</DropdownItem>
-		        <DropdownItem>Option 2</DropdownItem>
+                        {this.state.users.map(user =>
+                                              <DropdownItem key={user.id}>{user.username}
+                                              </DropdownItem>
+				             )}
+
+		        <DropdownItem divider />
+	                <DropdownItem>{ process.env.REACT_APP_PREFIX }</DropdownItem>
+	                <DropdownItem>{ process.env.REACT_APP_ENV }</DropdownItem>
 		        <DropdownItem divider />
 		        <DropdownItem>Reset</DropdownItem>
 		      </DropdownMenu>
