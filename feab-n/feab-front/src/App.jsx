@@ -15,7 +15,7 @@ import {
 } from "reactstrap";
 
 type Props = {};
-type State = { isOpen: boolean, users: Array<string> };
+type State = { isOpen: boolean, users: Array<string>, roles: Array<string>  };
 
 class App extends Component<Props, State> {
     
@@ -25,10 +25,17 @@ class App extends Component<Props, State> {
 	(this: any).toggle = this.toggle.bind(this);
 	(this: any).state = {
 	    isOpen: false,
-            users: []
+            users: [],
+            roles: [],
 	};
     }
     componentDidMount() {
+	fetch('/roles')
+	    .then(res => res.json())
+	    .then(roles =>
+                  this.setState({
+                          ...this.state,
+                      roles: roles }));
 	fetch('/users')
 	    .then(res => res.json())
 	    .then(users =>

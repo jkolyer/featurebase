@@ -11,14 +11,18 @@ let path = require('path');
 // let book = require('./app/routes/book');
 let indexRouter = require('./app/controllers/routes/index');
 let usersRouter = require('./app/controllers/routes/users');
+let rolesRouter = require('./app/controllers/routes/roles');
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+app.route("/roles")
+    .get(rolesRouter.getRoles)
+    .post(rolesRouter.postRole);
 
 let config = require('config'); //we load the db location from the JSON files
 //db options
 let options = {
-    server: { socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 } },
-    replset: { socketOptions: { keepAlive: 1, connectTimeoutMS : 30000 } }
+    server: { socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 } }
 };
 
 //db connection
@@ -32,15 +36,20 @@ if(config.util.getEnv('NODE_ENV') !== 'test') {
     app.use(morgan('combined')); //'combined' outputs the Apache style LOGs
 }
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// view engine setup
+app.set('views', path.join(__dirname, 'app/views'));
+app.set('view engine', 'jade');
+
 //parse application/json and look for raw text
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.text());
 app.use(bodyParser.json({ type: 'application/json'}));
-
-// view engine setup
-app.set('views', path.join(__dirname, 'app/views'));
-app.set('view engine', 'jade');
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -70,10 +79,11 @@ app.route("/book/:id")
     .put(book.updateBook);
 */
 
-/*
+
+let port = config.PORT_BACK 
 app.listen(port);
 console.log("Listening on port " + port);
-*/
+
 
 module.exports = app; // for testing
 
@@ -118,5 +128,5 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+pmodule.exports = app;
 */

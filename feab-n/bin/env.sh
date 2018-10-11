@@ -9,9 +9,19 @@ function go_dir {
     cd $1
 }
 
-function run_back {
+export FEAB_DEV_IP=10.0.0.231
+
+function serve_back {
     go_dir $FEAB_BACK
-    NODE_ENV=dev PORT=3001 DEBUG=feab-back:* npm start -b 10.0.0.231
+    NODE_ENV=dev PORT=3001 DEBUG=feab-back:* "$@" -b $FEAB_DEV_IP
+}
+
+function run_back {
+    serve_back npm start
+}
+
+function debug_back {
+    serve_back node inspect server.js
 }
 
 function run_front {
@@ -26,17 +36,13 @@ function flow_front {
 
 function mocha_test {
     go_dir $FEAB_BACK
-    npm test test/$1
+    NODE_ENV=test npm test test/$1
     # ./node_modules/mocha/bin/mocha test/$1
 }
 
 function sequelize_migrate {
     go_dir $FEAB_BACK
     node_modules/.bin/sequelize db:migrate
-}
-
-function express_start {
-    PORT=3001 DEBUG=feature-backend:* npm start -b 10.0.0.231
 }
 
 function sequelize_migrate {
