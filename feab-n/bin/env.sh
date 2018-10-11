@@ -34,3 +34,20 @@ function sequelize_migrate {
     go_dir $FEAB_BACK
     node_modules/.bin/sequelize db:migrate
 }
+
+function express_start {
+    PORT=3001 DEBUG=feature-backend:* npm start -b 10.0.0.231
+}
+
+function sequelize_migrate {
+    node_modules/.bin/sequelize db:migrate
+}
+
+function start_mongo {
+    sudo systemctl start mongod
+    sudo systemctl enable mongod
+}
+
+function status_mongo {
+    sudo systemctl status mongod
+}
