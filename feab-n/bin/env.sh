@@ -26,7 +26,8 @@ function flow_front {
 
 function mocha_test {
     go_dir $FEAB_BACK
-    ./node_modules/mocha/bin/mocha test/$1
+    npm test test/$1
+    # ./node_modules/mocha/bin/mocha test/$1
 }
 
 function sequelize_migrate {
