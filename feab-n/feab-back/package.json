@@ -3,10 +3,11 @@
     "version": "0.0.0",
     "private": true,
     "scripts": {
-	"start": "node ./bin/www",
-	"test": "mocha"
+	"start": "SET NODE_ENV=dev && node server.js",
+	"test": "mocha --timeout 10000"
     },
     "dependencies": {
+	"config": "^2.0.1",
 	"cookie-parser": "~1.4.3",
 	"debug": "~2.6.9",
 	"express": "~4.16.0",
@@ -15,9 +16,10 @@
 	"morgan": "~1.9.0"
     },
     "devDependencies": {
+	"chai": "^4.2.0",
+	"chai-http": "^2.0.1",
 	"after": "0.8.2",
 	"mocha": "^5.2.0",
 	"should": "13.2.3"
     }
-    
 }
