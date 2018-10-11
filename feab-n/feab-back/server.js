@@ -5,19 +5,22 @@ let morgan = require('morgan');
 let bodyParser = require('body-parser');
 let cookieParser = require('cookie-parser');
 let path = require('path');
+let createError = require('http-errors');
 
 // let port = 8080;
 
-// let book = require('./app/routes/book');
-let indexRouter = require('./app/controllers/routes/index');
-let usersRouter = require('./app/controllers/routes/users');
-let rolesRouter = require('./app/controllers/routes/roles');
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+/*
+let book = require('./app/routes/book');
+app.get("/", (req, res) => res.json({message: "Welcome to FeatureBase!"}));
+app.route("/book")
+    .get(book.getBooks)
+    .post(book.postBook);
+app.route("/book/:id")
+    .get(book.getBook)
+    .delete(book.deleteBook)
+    .put(book.updateBook);
+*/
 
-app.route("/roles")
-    .get(rolesRouter.getRoles)
-    .post(rolesRouter.postRole);
 
 let config = require('config'); //we load the db location from the JSON files
 //db options
@@ -36,8 +39,7 @@ if(config.util.getEnv('NODE_ENV') !== 'test') {
     app.use(morgan('combined')); //'combined' outputs the Apache style LOGs
 }
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -46,10 +48,32 @@ app.set('views', path.join(__dirname, 'app/views'));
 app.set('view engine', 'jade');
 
 //parse application/json and look for raw text
+
+/*
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.text());
 app.use(bodyParser.json({ type: 'application/json'}));
+*/
+
+app.use(express.json());
+app.use(express.json({ type: 'application/json'}));
+app.use(express.urlencoded({ extended: true }));
+
+
+let indexRouter = require('./app/controllers/routes/index');
+let usersRouter = require('./app/controllers/routes/users');
+let rolesRouter = require('./app/controllers/routes/roles');
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+
+app.route("/roles")
+    .get(rolesRouter.getRoles)
+    .post((req, res) => {
+	debugger
+	rolesRouter.postRole(req, res);
+    });
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -67,17 +91,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-
-/*
-app.get("/", (req, res) => res.json({message: "Welcome to FeatureBase!"}));
-app.route("/book")
-    .get(book.getBooks)
-    .post(book.postBook);
-app.route("/book/:id")
-    .get(book.getBook)
-    .delete(book.deleteBook)
-    .put(book.updateBook);
-*/
 
 
 let port = config.PORT_BACK 
