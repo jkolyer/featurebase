@@ -3,7 +3,7 @@
     "version": "0.0.0",
     "private": true,
     "scripts": {
-	"start": "SET NODE_ENV=dev && node server.js",
+	"start": "node app.js",
 	"test": "mocha --timeout 10000"
     },
     "dependencies": {

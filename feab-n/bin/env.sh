@@ -11,7 +11,7 @@ function go_dir {
 
 function run_back {
     go_dir $FEAB_BACK
-    PORT=3001 DEBUG=feab-back:* npm start -b 10.0.0.231
+    NODE_ENV=dev PORT=3001 DEBUG=feab-back:* npm start -b 10.0.0.231
 }
 
 function run_front {

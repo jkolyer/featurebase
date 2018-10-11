@@ -1,3 +1,3 @@
 {
-    "DBHost": "YOUR_TEST_DB_URI"
+    "DBHost": "mongodb://localhost/dev"
 }
