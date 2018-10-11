@@ -67,12 +67,16 @@ let rolesRouter = require('./app/controllers/routes/roles');
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-app.route("/roles")
+app.route("/role")
     .get(rolesRouter.getRoles)
     .post((req, res) => {
-	debugger
 	rolesRouter.postRole(req, res);
     });
+
+app.route("/role/:id")
+    .get(rolesRouter.getRole)
+    .delete(rolesRouter.deleteRole)
+    .put(rolesRouter.updateRole);
 
 
 // catch 404 and forward to error handler

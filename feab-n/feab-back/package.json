@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
 	"start": "node server.js",
-	"test": "mocha --timeout 10000"
+	"test": "mocha"
     },
     "dependencies": {
 	"config": "^2.0.1",
