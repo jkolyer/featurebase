@@ -12,6 +12,14 @@ const RoleSchema = new Schema({
     versionKey: false,
 });
 
+RoleSchema.methods.hasRole = function(cb) {
+    this.model('Role').findOne({
+	name: this.name
+    }, function(err, val) {
+	cb(!!val);
+    });
+};
+
 // Sets the createdAt parameter equal to the current time
 RoleSchema.pre('save', (next) => {
     if (!this.createdAt) {
@@ -21,4 +29,4 @@ RoleSchema.pre('save', (next) => {
 });
 
 // Exports the RoleSchema for use elsewhere.
-module.exports = mongoose.model('role', RoleSchema);
+module.exports = mongoose.model('Role', RoleSchema);
