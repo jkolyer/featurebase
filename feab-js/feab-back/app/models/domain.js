@@ -34,11 +34,15 @@ DomainSchema.statics.bootstrap = function(domainData, callback) {
     
     _.forEach(domainData, async function(value, key) {
 	const dname = value.name
-	await Domain.findOne({ slug: key }, function(err, domain) {
+	await Domain.findOne({ slug: key }, async function(err, domain) {
 	    if (!domain) {
 		domain = new Domain({ slug: key, name: dname })
+
+		console.log(domain);
+		await domain.save(function(err) {
+		    console.log('*** saved');
+		});
 	    }
-	    console.log(domain);
 	    domains.push(domain);
 	    
 	    if (domains.length == numDomain) {

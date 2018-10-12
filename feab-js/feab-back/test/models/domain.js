@@ -26,9 +26,11 @@ describe('domain field validation', () => {
         });
     });
     it('should create from bootstrapping', (done) => {
-        Domain.bootstrap(config.Domain, (domains) => {
-            expect(domains.length).to.eq(2);
-            done();
+        Domain.remove({}, function() {
+            Domain.bootstrap(config.Domain, (domains) => {
+                expect(domains.length).to.eq(2);
+                done();
+            });
         });
     });
     
