@@ -23,10 +23,6 @@ const DomainSchema = new Schema({
     versionKey: false,
 });
 
-DomainSchema.query.bySlug = function (slug) {
-    return this.where({ slug });
-};
-
 DomainSchema.statics.bootstrap = function (domainData, callback) {
     const domains = [];
     const numDomain = Object.keys(domainData).length;
@@ -41,7 +37,6 @@ DomainSchema.statics.bootstrap = function (domainData, callback) {
                                          name: dname,
                                          roles: roles
                                        });
-
                 console.log(domainObj);
                 await domainObj.save((err2) => {
                     console.log('*** saved');
