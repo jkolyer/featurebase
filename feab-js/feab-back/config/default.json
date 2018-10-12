@@ -1,3 +1,15 @@
 {
-    "DBHost": "YOUR_TEST_DB_URI"
+    "Domain": {
+	"site": {
+	    "name": "Site",
+	    "roles": [{ "name": "Admin", "slug": "admin" },
+		      { "name": "Guest", "slug": "guest", "parent": "admin" }]
+	},
+	"adhoc": {
+	    "name": "Ad Hoc",
+	    "roles": [{ "name": "Super User", "slug": "super-user" },
+		      { "name": "Premium User", "slug": "premium-user", "parent": "super-user" },
+		      { "name": "Basic User", "slug": "basic-user", "parent": "premium-user" }]
+	}
+    }
 }

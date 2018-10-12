@@ -39,10 +39,18 @@ function flow_back {
     yarn flow
 }
 
-function mocha_test {
+function run_mocha {
     go_dir $FEAB_BACK
-    NODE_ENV=test npm test test/$1
+    NODE_ENV=test npm test $2 test/$1
     # ./node_modules/mocha/bin/mocha test/$1
+}
+
+function mocha_test {
+    run_mocha $1
+}
+
+function mocha_test_debug {
+    run_mocha $1 debug
 }
 
 function sequelize_migrate {
