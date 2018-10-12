@@ -57,3 +57,7 @@ function start_mongo {
 function status_mongo {
     sudo systemctl status mongod
 }
+
+function dolint {
+    ./node_modules/.bin/eslint $1
+}
