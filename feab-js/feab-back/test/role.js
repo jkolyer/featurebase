@@ -7,6 +7,8 @@ const chaiHttp = require('chai-http');
 const server = require('../server');
 const Role = require('../app/models/role');
 
+const should = chai.should();
+
 chai.use(chaiHttp);
 
 // Our parent block
@@ -108,7 +110,7 @@ describe('Roles', () => {
                         res.should.have.status(200);
                         res.body.should.be.a('object');
                         res.body.should.have.property('message').eql('Role updated!');
-                        res.body.role.should.have.property('order_id').eql(102);
+                        res.body.role2.should.have.property('order_id').eql(102);
                         done();
                     });
             });
