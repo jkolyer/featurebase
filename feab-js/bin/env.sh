@@ -34,6 +34,11 @@ function flow_front {
     yarn flow
 }
 
+function flow_back {
+    go_dir $FEAB_BACK
+    yarn flow
+}
+
 function mocha_test {
     go_dir $FEAB_BACK
     NODE_ENV=test npm test test/$1
