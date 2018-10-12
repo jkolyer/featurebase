@@ -211,7 +211,7 @@ These are the intended user roles for a given feature.  In the following example
 </ul>
 
 #### Domains
-Domains capture groupings of features.  For example, the <i>Site</i> domain represents features that are not unique to your given business app; these are features users expect to see on most apps.  <i>Basic</i> domain covers fundamental features provided by your business; these might be what a free user would expect with a freemium app.  
+Domains represent groupings of features based on their business function.  
 
 ##### Example
 <ul>
