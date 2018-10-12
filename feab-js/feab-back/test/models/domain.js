@@ -38,6 +38,9 @@ describe('domain field validation', () => {
 		    } else if (domain.slug === 'adhoc') {
 			expect(domain.roles.length).to.eq(3);
 		    }
+		    _.forEach(domain.roles, (role) => {
+			expect(role.domain).to.eq(domain.slug);
+		    });
 		});
 		
                 done();

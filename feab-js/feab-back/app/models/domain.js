@@ -9,6 +9,7 @@ const RoleSchema = new Schema({
     name: { type: String, required: true },
     slug: { type: String, required: true },
     parent: { type: String, required: false },
+    domain: { type: String, required: true },
 }, {
     versionKey: false,
 });
