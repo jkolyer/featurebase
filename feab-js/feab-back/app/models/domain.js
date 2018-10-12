@@ -22,8 +22,6 @@ const DomainSchema = new Schema({
     versionKey: false,
 });
 
-// DomainSchema.plugin(findOrCreate);
-
 DomainSchema.query.bySlug = function (slug) {
     return this.where({ slug });
 };
@@ -34,13 +32,17 @@ DomainSchema.statics.bootstrap = function (domainData, callback) {
 
     _.forEach(domainData, async (value, key) => {
         const dname = value.name;
+        const roles = value.roles
         await Domain.findOne({ slug: key }, async (err, domain) => {
             let domainObj = domain;
             if (!domainObj) {
-                domainObj = new Domain({ slug: key, name: dname });
+                domainObj = new Domain({ slug: key,
+                                         name: dname,
+                                         roles: roles
+                                       });
 
                 console.log(domainObj);
-                await domain.save((err2) => {
+                await domainObj.save((err2) => {
                     console.log('*** saved');
                     if (err2) {
                         console.log(`ERROR:  ${err2}`);
@@ -56,7 +58,7 @@ DomainSchema.statics.bootstrap = function (domainData, callback) {
     });
 };
 
+// NOTE this is declared at top, and referenced within the bootstrap static method
 Domain = mongoose.model('Domain', DomainSchema);
 
-// Exports the DomainSchema for use elsewhere.
 module.exports = Domain;

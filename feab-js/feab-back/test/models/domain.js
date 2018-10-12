@@ -4,6 +4,7 @@ const sinonTest = require('sinon-test');
 const Domain = require('../../app/models/domain');
 const config = require('config');
 const mongoose = require('mongoose');
+const _ = require('lodash');
 
 const test = sinonTest(sinon);
 
@@ -27,8 +28,18 @@ describe('domain field validation', () => {
     });
     it('should create from bootstrapping', (done) => {
         Domain.remove({}, function() {
+	    // NOTE:  this uses the default config/default.json definition
             Domain.bootstrap(config.Domain, (domains) => {
                 expect(domains.length).to.eq(2);
+
+		_.forEach(domains, (domain) => {
+		    if (domain.slug === 'site') {
+			expect(domain.roles.length).to.eq(2);
+		    } else if (domain.slug === 'adhoc') {
+			expect(domain.roles.length).to.eq(3);
+		    }
+		});
+		
                 done();
             });
         });
