@@ -72,5 +72,5 @@ function status_mongo {
 }
 
 function dolint {
-    ./node_modules/.bin/eslint $1
+    ./node_modules/.bin/eslint "$@"
 }

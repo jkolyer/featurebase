@@ -12,11 +12,11 @@ const RoleSchema = new Schema({
     versionKey: false,
 });
 
-RoleSchema.methods.hasRole = function(cb) {
+RoleSchema.methods.hasRole = function (cb) {
     this.model('Role').findOne({
-	name: this.name
-    }, function(err, val) {
-	cb(!!val);
+        name: this.name,
+    }, (err, val) => {
+        cb(!!val);
     });
 };
 
