@@ -35,7 +35,7 @@ class App extends Component<Props, State> {
             .then((roles) => {
                 this.setState(prevState => ({
                     ...prevState,
-                    roles: roles,
+                    roles,
                 }));
             });
         fetch('/users')
@@ -43,7 +43,7 @@ class App extends Component<Props, State> {
             .then((users) => {
                 this.setState(prevState => ({
                     ...prevState,
-                    users: users,
+                    users,
                 }));
             });
     }
