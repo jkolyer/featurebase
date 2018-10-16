@@ -1,11 +1,11 @@
 require('dotenv').config();
 
-const { join } = require('path');
 const express = require('express');
 const passport = require('passport');
 const config = require('./config');
 
-const models = join(__dirname, 'app/models');
+// const { join } = require('path');
+// const models = join(__dirname, 'app/models');
 // connect to the database and load models
 require('./server/models').connect(config.db);
 
