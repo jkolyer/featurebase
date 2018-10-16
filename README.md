@@ -214,19 +214,6 @@ These are the intended user roles for a given feature.  In the following example
  </li>
 </ul>
 
-<ul>
-  <li>User:  authenticated user with basic feature access
-  <ul>
-    <li>Premium User:  authenticated user will full feature access
-    <ul>
-      <li>Admin:  super user privileges</li>
-     </ul>
-    </li>
-   </ul>
-   </li>
-  <li>Guest:  an unauthenticated user</li>
-</ul>
-
 #### Domains
 Domains represent groupings of features based on their business function.  
 
