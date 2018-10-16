@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import injectTapEventPlugin from 'react-tap-event-plugin';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 // import routes from './routes.js';
@@ -20,8 +19,6 @@ import SignUpPage from './containers/SignUpPage.jsx';
 import DashboardPage from './containers/DashboardPage.jsx';
 import Auth from './modules/Auth';
 
-// remove tap delay, essential for MaterialUI to work properly
-injectTapEventPlugin();
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={props => (
