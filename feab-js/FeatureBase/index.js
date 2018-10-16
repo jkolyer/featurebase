@@ -6,10 +6,16 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 const config = require('./config');
 
+const models = join(__dirname, 'app/models');
 // connect to the database and load models
-require('./server/models').connect(config.dbUri);
+require('./server/models').connect(config.db);
 
 const app = express();
+
+// Bootstrap routes
+require('./config/passport')(passport);
+
+
 // tell the app to look for static files in these directories
 app.use(express.static('./server/static/'));
 app.use(express.static('./client/dist/'));
@@ -19,10 +25,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 
 // load passport strategies
+/*
 const localSignupStrategy = require('./server/passport/local-signup');
 const localLoginStrategy = require('./server/passport/local-login');
 passport.use('local-signup', localSignupStrategy);
 passport.use('local-login', localLoginStrategy);
+*/
 
 // pass the authenticaion checker middleware
 const authCheckMiddleware = require('./server/middleware/auth-check');
