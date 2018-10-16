@@ -12,7 +12,7 @@ require('./server/models').connect(config.db);
 const app = express();
 
 // Bootstrap routes
-require('./config/passport')(passport);
+require('./config/passport')(app, passport);
 
 
 // tell the app to look for static files in these directories
@@ -21,9 +21,6 @@ app.use(express.static('./client/dist/'));
 
 // tell the app to parse HTTP body messages
 app.use(express.urlencoded({ extended: false }));
-
-// pass the passport middleware
-app.use(passport.initialize());
 
 // pass the authenticaion checker middleware
 const authCheckMiddleware = require('./server/middleware/auth-check');

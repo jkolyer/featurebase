@@ -18,7 +18,7 @@ const localLoginStrategy = require('../server/passport/local-login');
  * Expose
  */
 
-module.exports = function (passport) {
+module.exports = function (app, passport) {
     passport.use('local-signup', localSignupStrategy);
     passport.use('local-login', localLoginStrategy);
     // passport.use(local);
@@ -27,5 +27,10 @@ module.exports = function (passport) {
   passport.use(facebook);
   passport.use(twitter);
   passport.use(linkedin);
-  passport.use(github);
+    passport.use(github);
+
+    // pass the passport middleware
+    app.use(passport.initialize());
+
+    
 };
