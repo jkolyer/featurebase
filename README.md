@@ -198,6 +198,23 @@ A prototypical example of a hiearchical feature is user authentication.  This is
 #### Roles
 These are the intended user roles for a given feature.  In the following example, a <i>premium user</i> inherits from the <i>user</i> role, and the <i>admin</i> inherits from the former.  
 <ul>
+  <li>Super User:  top-level user with all privileges (e.g., support, QA)
+  <ul>
+    <li>Premium User:  authenticated user will full feature access
+    <ul>
+      <li>Basic User:  authenticated user with basic feature access</li>
+     </ul>
+    </li>
+   </ul>
+   </li>
+  <li>Admin:  administrative user (e.g., QA, devops)
+   <ul>
+    <li>Guest:  an unauthenticated user</li>
+   </ul>
+ </li>
+</ul>
+
+<ul>
   <li>User:  authenticated user with basic feature access
   <ul>
     <li>Premium User:  authenticated user will full feature access
