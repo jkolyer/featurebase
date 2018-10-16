@@ -49,6 +49,8 @@
     "mocha": "^5.2.0",
     "nodemon": "^1.18.4",
     "should": "13.2.3",
-    "webpack": "^4.20.2"
+    "webpack": "^4.20.2",
+						"sinon": "^6.3.4",
+						"sinon-test": "^2.3.0"
   }
 }

@@ -24,6 +24,21 @@ const defaults = {
   notifier: notifier
 };
 
+const domains = {
+	"site": {
+	  "name": "Site",
+	  "roles": [{ "name": "Admin", "slug": "admin", "domain": "site" },
+		          { "name": "Guest", "slug": "guest", "parent": "admin", "domain": "site" }]
+	},
+	"adhoc": {
+	  "name": "Ad Hoc",
+	  "roles": [{ "name": "Super User", "slug": "super-user", "domain": "adhoc" },
+		          { "name": "Premium User", "slug": "premium-user", "parent": "super-user", "domain": "adhoc" },
+		          { "name": "Basic User", "slug": "basic-user", "parent": "premium-user", "domain": "adhoc" }],
+	}
+};
+
+
 /**
  * Expose
  */
@@ -34,6 +49,7 @@ let configs = {
     production: Object.assign({}, production, defaults),
 }[process.env.NODE_ENV || 'development'];
 
-configs['jwtSecret'] = "a secret phrase!!"
+configs['jwtSecret'] = "a secret phrase!!";
+configs['domains'] = domains;
 
-module.exports = configs
+module.exports = configs;
