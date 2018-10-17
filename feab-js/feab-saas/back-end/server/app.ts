@@ -40,7 +40,7 @@ mongoose.connect(
 const server = express();
 
 const appPort = process.env.APP_PORT || 3000;
-const origin = dev ? `http://localhost:${appPort}` : PRODUCTION_URL_APP;
+const origin = dev ? `http://${devhost}:${appPort}` : PRODUCTION_URL_APP;
 server.use(cors({ origin, credentials: true }));
 
 server.use(helmet());
@@ -63,7 +63,7 @@ const sessionOptions = {
   cookie: {
     httpOnly: true,
     maxAge: 14 * 24 * 60 * 60 * 1000, // expires in 14 days
-    domain: dev ? 'localhost' : '.async-await.com',
+    domain: devhost,
   } as any,
 };
 
