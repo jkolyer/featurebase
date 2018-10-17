@@ -11,7 +11,7 @@ import { styleLoginButton } from '../../lib/sharedStyles';
 const dev = process.env.NODE_ENV !== 'production';
 const { PRODUCTION_URL_API } = env;
 const port = process.env.PORT || 8000;
-const devhost = process.env.NODE_IP || 'localhost';
+const devhost = process.env.NODE_IP || 'cohere.us'; // 'localhost';
 const LOGIN_URL = dev ? `http://${devhost}:${port}` : PRODUCTION_URL_API;
 
 class LoginButton extends React.PureComponent<{ next?: string; invitationToken?: string }> {

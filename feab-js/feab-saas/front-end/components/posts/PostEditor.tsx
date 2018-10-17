@@ -64,7 +64,7 @@ class PostEditor extends React.Component<MyProps, MyState> {
           <Button
             color="primary"
             onClick={this.showMarkdownContent}
-            variant="flat"
+            variant="text"
             style={{ fontWeight: htmlContent ? 300 : 600 }}
           >
             Markdown
@@ -72,7 +72,7 @@ class PostEditor extends React.Component<MyProps, MyState> {
           <Button
             color="primary"
             onClick={this.showHtmlContent}
-            variant="flat"
+            variant="text"
             style={{ fontWeight: htmlContent ? 600 : 300 }}
           >
             HTML

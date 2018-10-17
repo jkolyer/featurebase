@@ -13,7 +13,7 @@ import EditDiscussionForm from './EditDiscussionForm';
 const dev = process.env.NODE_ENV !== 'production';
 const { PRODUCTION_URL_APP } = env;
 const port = process.env.PORT || 3000;
-const devhost = process.env.NODE_IP || 'localhost';
+const devhost = process.env.NODE_IP || 'cohere.us'; // 'localhost';
 const ROOT_URL = dev ? `http://${devhost}:${port}` : PRODUCTION_URL_APP;
 
 const getMenuOptions = discussion => ({

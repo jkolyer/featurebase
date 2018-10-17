@@ -31,7 +31,7 @@ const styleNoTeamDiv = {
 const dev = process.env.NODE_ENV !== 'production';
 const { PRODUCTION_URL_API } = env;
 const port = process.env.API_PORT || 8000;
-const devhost = process.env.NODE_IP || 'localhost';
+const devhost = process.env.NODE_IP || 'cohere.us'; // 'localhost';
 const LOG_OUT_URL = dev ? `http://${devhost}:${port}` : PRODUCTION_URL_API;
 
 Router.onRouteChangeStart = () => {

@@ -346,7 +346,7 @@ class UserClass extends mongoose.Model {
     if (!hasInvitation) {
       try {
         await sendEmail({
-          from: `Kelly from async-await.com <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
+          from: `JimBob from cohere.us <${process.env.EMAIL_SUPPORT_FROM_ADDRESS}>`,
           to: [email],
           subject: template.subject,
           body: template.message,
