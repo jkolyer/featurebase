@@ -101,10 +101,21 @@ class DomainRoleClass extends mongoose.Model {
 
   public static async add({ name, domainId, parentId }) {
     if (!name) {
-      throw new Error('Add: Missing name');
+      throw {
+        name: 'DomainRoleAddError',
+        message: 'Missing name',
+      };
     }
 
     await this.checkPermission({ domainId, parentId });
+
+    const existing = await this.findOne({ domainId, name });
+    if (existing) {
+      throw {
+        name: 'DuplicateDomainRoleName',
+        message: `domain role with name ${name} already exists`,
+      };
+    }
 
     const slug = await generateSlug(this, name);
 

@@ -134,7 +134,7 @@ describe('creating domains', () => {
 
 describe('creating domain roles', () => {
   let buildDomainRole = function() {
-    return async (domain, name, parentId) => {
+    return async (name, domain, parentId) => {
       const role = await DomainRole.add({ domainId: domain.id,
                                           name: name,
                                           parentId: parentId });
@@ -153,7 +153,7 @@ describe('creating domain roles', () => {
   
   test('should be valid role', async (done) => {
     const domain = await buildDomain('Site');
-    const domainRole = await buildDomainRole(domain, 'Admin', null);
+    const domainRole = await buildDomainRole('Admin', domain, null);
 
     expect(domainRole.slug).toEqual('admin');
     expect(domainRole.name).toEqual('Admin');
@@ -162,6 +162,21 @@ describe('creating domain roles', () => {
       expect(err).toBeNull();
       done();
     });
+  });
+  
+  test('should disallow duplicate role names within domain', async (done) => {
+    const domain = await buildDomain('Site');
+    const roleName = 'Admin';
+    await buildDomainRole(roleName, domain, null);
+
+    expect.assertions(1);
+    try {
+      await buildDomainRole(roleName, domain, null);
+    } catch (err) {
+      expect(err.name).toEqual('DuplicateDomainRoleName');
+    }
+
+    done();
   });
   
 });
