@@ -179,5 +179,16 @@ describe('creating domain roles', () => {
     done();
   });
   
+  test('should allow duplicate role names across domains', async (done) => {
+    const domain1 = await buildDomain('Site');
+    const roleName = 'Admin';
+    await buildDomainRole(roleName, domain1, null);
+
+    expect.assertions(0);
+    const domain2 = await buildDomain('Adhoc');
+    await buildDomainRole(roleName, domain2, null);
+    done();
+  });
+  
 });
 
