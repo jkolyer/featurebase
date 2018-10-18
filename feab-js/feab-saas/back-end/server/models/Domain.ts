@@ -4,7 +4,7 @@ import { generateSlug } from '../utils/slugify';
 import Team from './Team';
 
 const mongoSchema = new mongoose.Schema({
-  createdUserId: {
+  userId: {
     type: String,
     required: true,
   },
@@ -30,7 +30,7 @@ const mongoSchema = new mongoose.Schema({
 mongoSchema.index({ name: 'text' });
 
 interface IDomainDocument extends mongoose.Document {
-  createdUserId: string;
+  userId: string;
   teamId: string;
   name: string;
   slug: string;
@@ -72,7 +72,10 @@ interface IDomainModel extends mongoose.Model<IDomainDocument> {
 class DomainClass extends mongoose.Model {
   public static async checkPermission({ userId, teamId }) {
     if (!userId || !teamId) {
-      throw new Error('Bad data');
+      throw {
+        name: 'DomainPermissions',
+        message: 'Missing user or team identifier',
+      };
     }
 
     const team = await Team.findById(teamId)
@@ -80,7 +83,10 @@ class DomainClass extends mongoose.Model {
       .lean();
 
     if (!team) {
-      throw new Error('Team not found');
+      throw {
+        name: 'DomainPermissions',
+        message: 'Missing team',
+      };
     }
 
     return { team };
@@ -100,15 +106,26 @@ class DomainClass extends mongoose.Model {
 
   public static async add({ name, userId, teamId }) {
     if (!name) {
-      throw new Error('Bad data');
+      throw {
+        name: 'DomainAddError',
+        message: 'Missing name',
+      };
     }
 
     await this.checkPermission({ userId, teamId });
 
+    const existing = await this.findOne({ userId, teamId, name });
+    if (existing) {
+      throw {
+        name: 'DuplicateDomainName',
+        message: 'domain with name ${name} already exists',
+      };
+    }
+
     const slug = await generateSlug(this, name);
 
     return this.create({
-      createdUserId: userId,
+      userId,
       teamId,
       name,
       slug,
@@ -118,11 +135,14 @@ class DomainClass extends mongoose.Model {
 
   public static async edit({ userId, id, name }) {
     if (!id) {
-      throw new Error('Bad data');
+      throw {
+        name: 'DomainEditError',
+        message: 'Missing domain identifier',
+      };
     }
 
     const domain = await this.findById(id)
-      .select('teamId createdUserId')
+      .select('teamId userId')
       .lean();
 
     const { team } = await this.checkPermission({
@@ -130,8 +150,11 @@ class DomainClass extends mongoose.Model {
       teamId: domain.teamId,
     });
 
-    if (domain.createdUserId !== userId && team.teamLeaderId !== userId) {
-      throw new Error('Permission denied. Only create user or team leader can update.');
+    if (domain.userId !== userId && team.teamLeaderId !== userId) {
+      throw {
+        name: 'DomainEditError',
+        message: 'Permission denied. Only create user or team leader can update.',
+      };
     }
 
     await this.updateOne(
@@ -146,7 +169,10 @@ class DomainClass extends mongoose.Model {
 
   public static async delete({ userId, id }) {
     if (!id) {
-      throw new Error('Bad data');
+      throw {
+        name: 'DomainDeleteError',
+        message: 'missing domain identifier',
+      };
     }
 
     const domain = await this.findById(id)

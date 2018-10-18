@@ -77,12 +77,12 @@ interface IDomainRoleModel extends mongoose.Model<IDomainRoleDocument> {
 class DomainRoleClass extends mongoose.Model {
   public static async checkPermission({ domainId, parentId }) {
     if (!domainId) {
-      throw new Error('Missing domainId');
+      throw new Error('DomainRole.checkPermission:  Missing domainId');
     }
     if (parentId) {
       const parent = await this.findById(parentId).lean();
       if (!parent) {
-        throw new Error('CheckPermission: Parent not found');
+        throw new Error('DomainRole.checkPermission:  Parent not found');
       }
     }
   }
@@ -119,7 +119,7 @@ class DomainRoleClass extends mongoose.Model {
 
   public static async delete({ domainId, id }) {
     if (!id) {
-      throw new Error('Delete: Missing id');
+      throw new Error('DomainRole.delete: Missing id');
     }
 
     const domainRole = await this.findById(id)

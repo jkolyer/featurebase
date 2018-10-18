@@ -83,5 +83,5 @@ function jest_back {
 
 function jest_back_debug {
     go_dir $FEAB_BACK
-    node inspect ./node_modules/jest-cli/bin/jest.js $1
+    node inspect ./node_modules/jest-cli/bin/jest.js "$@"
 }

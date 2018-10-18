@@ -116,6 +116,20 @@ describe('creating domains', () => {
     done();
   });
   
+  test('should not create duplicate domains', async (done) => {
+    const dname = 'Site';
+    await buildDomain(dname);
+
+    expect.assertions(1);
+    try {
+      await buildDomain(dname);
+    } catch (err) {
+      expect(err.name).toEqual('DuplicateDomainName');
+    }
+
+    done();
+  });
+  
 });
 
 describe('creating domain roles', () => {
