@@ -1,8 +1,8 @@
 export BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 export FEAB_ENV=$BIN_DIR/..
-export FEAB_BACK=$FEAB_ENV/feab-back
-export FEAB_FRONT=$FEAB_ENV/feab-front
+export FEAB_BACK=$FEAB_ENV/feab-saas/back-end
+export FEAB_FRONT=$FEAB_ENV/feab-saas/front-end
 
 function go_dir {
     echo $1
@@ -41,7 +41,8 @@ function flow_back {
 
 function run_mocha {
     go_dir $FEAB_BACK
-    NODE_ENV=test npm test $2 test/$1
+    NODE_ENV=test ./node_modules/mocha/bin/mocha test/$1
+    # NODE_ENV=test npm test $2 test/$1
     # ./node_modules/mocha/bin/mocha test/$1
 }
 
@@ -73,4 +74,14 @@ function status_mongo {
 
 function dolint {
     ./node_modules/.bin/eslint "$@"
+}
+
+function jest_back {
+    go_dir $FEAB_BACK
+    yarn test __tests__/$1
+}
+
+function jest_back_debug {
+    go_dir $FEAB_BACK
+    node inspect ./node_modules/jest-cli/bin/jest.js __tests__/$1
 }
