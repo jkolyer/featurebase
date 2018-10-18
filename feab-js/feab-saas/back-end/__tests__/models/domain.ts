@@ -8,7 +8,7 @@ import { generateNumberSlug, generateSlug } from '../../server/utils/slugify';
 
 let owner = function() {
   let userId;
-  return async function() {
+  return async () => {
     if (userId) return await User.findById(userId);
 
     const email = 'foo+bar@example.com';
@@ -36,17 +36,17 @@ let owner = function() {
 }();
 
 let ownerTeam = function() {
-  return async function(downer) {
-    let tm = await Team.findOne({ teamLeaderId: downer.id });
+  return async (domainOwner) => {
+    let tm = await Team.findOne({ teamLeaderId: domainOwner.id });
     if (tm) {
       return tm;
     }
 
     const defaultTeam = true;
     const slug = await generateNumberSlug(Team);
-    const userId = downer.id;
+    const userId = domainOwner.id;
     
-    const team = await Team.create({
+    tm = await Team.create({
       teamLeaderId: userId,
       name: 'Team Name',
       slug,
@@ -55,31 +55,65 @@ let ownerTeam = function() {
       createdAt: new Date(),
       defaultTeam,
     });
-    return team;
+    return tm;
+  }
+}();
+
+let buildDomain = function() {
+  return async (dname) => {
+    const domainOwner = await owner();
+    const domainTeam = await ownerTeam(domainOwner);
+
+    const domain = await Domain.add({ userId: domainOwner.id,
+                                      name: dname,
+                                      teamId: domainTeam.id });
+    return domain;
   }
 }();
   
-describe('domain field validation', () => {
+describe('creating domains', () => {
 
-  beforeAll(async function() {
+  beforeAll(async () => {
     await mongoose.connect(process.env.MONGO_URL_TEST);
+  });
+  
+  beforeEach(async () => {
     await Domain.remove({});
   });
   
   test('should be valid', async (done) => {
-    const downer = await owner();
-    debugger
-    const dteam = await ownerTeam(downer);
-
     const dname = 'Site';
-    const domain = await Domain.add({ userId: downer.id,
-                                      name: dname,
-                                      teamId: dteam.id });
+    const domain = await buildDomain(dname);
     expect(domain.slug).toEqual('site');
+    expect(domain.name).toEqual(dname);
+    
     domain.validate((err) => {
       expect(err).toBeNull();
       done();
     });
   });
   
+  test('should get list of domains', async (done) => {
+    const dname1 = 'Site';
+    const dname2 = 'Adhoc';
+    const dname3 = 'Vertical';
+    
+    await buildDomain(dname1);
+    await buildDomain(dname2);
+    await buildDomain(dname3);
+
+    const user = await owner();
+    const team = await ownerTeam(user);
+    
+    const dlist = await Domain.getList({ userId: user.id, teamId: team.id });
+    const domains = dlist.domains
+    expect(domains.length).toEqual(3);
+    expect(domains[0].name).toEqual(dname1);
+    expect(domains[1].name).toEqual(dname2);
+    expect(domains[2].name).toEqual(dname3);
+
+    done();
+  });
+  
 });
+

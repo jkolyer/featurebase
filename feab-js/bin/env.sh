@@ -78,10 +78,10 @@ function dolint {
 
 function jest_back {
     go_dir $FEAB_BACK
-    yarn test __tests__/$1
+    yarn test $1
 }
 
 function jest_back_debug {
     go_dir $FEAB_BACK
-    node inspect ./node_modules/jest-cli/bin/jest.js __tests__/$1
+    node inspect ./node_modules/jest-cli/bin/jest.js $1
 }

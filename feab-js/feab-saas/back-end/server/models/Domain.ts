@@ -91,7 +91,9 @@ class DomainClass extends mongoose.Model {
 
     const filter: any = { teamId };
 
-    const domains: any[] = await this.find(filter).lean();
+    const domains: any[] = await this.find(filter,
+                                           null,
+                                           { sort: { createdAt: 1 }}).lean();
 
     return { domains };
   }
