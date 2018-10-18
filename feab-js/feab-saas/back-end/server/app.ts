@@ -24,7 +24,7 @@ const devhost = process.env.NODE_IP || 'localhost';
 const { PRODUCTION_URL_APP, PRODUCTION_URL_API } = process.env;
 const ROOT_URL = dev ? `http://${devhost}:${port}` : PRODUCTION_URL_API;
 
-const MONGO_URL = dev ? process.env.MONGO_URL_TEST : process.env.MONGO_URL;
+const MONGO_URL = dev ? process.env.MONGO_URL_DEV : process.env.MONGO_URL;
 
 const options = {
   useNewUrlParser: true,
