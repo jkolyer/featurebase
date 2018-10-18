@@ -1,4 +1,5 @@
 import Domain from '../../server/models/Domain';
+import DomainRole from '../../server/models/DomainRole';
 import Team from '../../server/models/Team';
 import User from '../../server/models/User';
 import * as mongoose from 'mongoose';
@@ -113,6 +114,40 @@ describe('creating domains', () => {
     expect(domains[2].name).toEqual(dname3);
 
     done();
+  });
+  
+});
+
+describe('creating domain roles', () => {
+  let buildDomainRole = function() {
+    return async (domain, name, parentId) => {
+      const role = await DomainRole.add({ domainId: domain.id,
+                                          name: name,
+                                          parentId: parentId });
+      return role;
+    }
+  }();
+
+  beforeAll(async () => {
+    await mongoose.connect(process.env.MONGO_URL_TEST);
+  });
+  
+  beforeEach(async () => {
+    await Domain.remove({});
+    await DomainRole.remove({});
+  });
+  
+  test('should be valid role', async (done) => {
+    const domain = await buildDomain('Site');
+    const domainRole = await buildDomainRole(domain, 'Admin', null);
+
+    expect(domainRole.slug).toEqual('admin');
+    expect(domainRole.name).toEqual('Admin');
+    
+    domainRole.validate((err) => {
+      expect(err).toBeNull();
+      done();
+    });
   });
   
 });
