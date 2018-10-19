@@ -124,7 +124,6 @@ class DomainRoleClass extends mongoose.Model {
         message: 'Missing name',
       };
     }
-
     await this.checkPermission({ domainId, parentId });
 
     const existing = await this.findOne({ domainId, name });

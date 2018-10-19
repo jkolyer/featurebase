@@ -1,77 +1,9 @@
 import Domain from '../../server/models/Domain';
 import DomainRole from '../../server/models/DomainRole';
-import Team from '../../server/models/Team';
-import User from '../../server/models/User';
 import * as mongoose from 'mongoose';
 import * as _ from 'lodash';
+import { owner, ownerTeam, buildDomain } from './modelBuilder'
 
-import { generateNumberSlug, generateSlug } from '../../server/utils/slugify';
-
-let owner = function() {
-  let userId;
-  return async () => {
-    if (userId) return await User.findById(userId);
-
-    const email = 'foo+bar@example.com';
-    let usr = await User.findOne({ email });
-    if (usr) {
-      userId = usr.id;
-      return usr;
-    }
-
-    const dName = 'Jim McBob';
-    const slug = await generateSlug(User, dName);
-    usr = await User.create({
-      createdAt: new Date(),
-      googleId: 'userGoogleId-abc123',
-      email: email,
-      googleToken: 'userGoogleToken',
-      name: dName,
-      avatarUrl: 'http://avatarUrl.com',
-      slug,
-      defaultTeamSlug: '',
-    });
-    userId = usr.id;
-    return usr;
-  }
-}();
-
-let ownerTeam = function() {
-  return async (domainOwner) => {
-    let tm = await Team.findOne({ teamLeaderId: domainOwner.id });
-    if (tm) {
-      return tm;
-    }
-
-    const defaultTeam = true;
-    const slug = await generateNumberSlug(Team);
-    const userId = domainOwner.id;
-    
-    tm = await Team.create({
-      teamLeaderId: userId,
-      name: 'Team Name',
-      slug,
-      avatarUrl: 'http://avatarUrl.com',
-      memberIds: [userId],
-      createdAt: new Date(),
-      defaultTeam,
-    });
-    return tm;
-  }
-}();
-
-let buildDomain = function() {
-  return async (dname) => {
-    const domainOwner = await owner();
-    const domainTeam = await ownerTeam(domainOwner);
-
-    const domain = await Domain.add({ userId: domainOwner.id,
-                                      name: dname,
-                                      teamId: domainTeam.id });
-    return domain;
-  }
-}();
-  
 describe('creating domains', () => {
 
   beforeAll(async () => {
@@ -201,10 +133,10 @@ describe('creating domain roles', () => {
     const basicUserName = 'Basic User';
     const basicRole = await buildDomainRole(basicUserName, domain1, premiumRole.id);
 
-    let parent = await DomainRole.findParent({ parentId: premiumRole.parentId });
+    let parent = await DomainRole.findOne({ _id: premiumRole.parentId });
     expect(parent.name).toEqual(superUserName);
 
-    parent = await DomainRole.findParent({ parentId: basicRole.parentId });
+    parent = await DomainRole.findOne({ _id: basicRole.parentId });
     expect(parent.name).toEqual(premiumUserName);
 
     const children = await DomainRole.findChildren({ domainRoleId: superRole.id });
