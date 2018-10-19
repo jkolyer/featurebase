@@ -213,5 +213,24 @@ describe('creating domain roles', () => {
     done();
   });
   
+  test('should updated childs parent on delete', async (done) => {
+    const domain1 = await buildDomain('Adhoc');
+    
+    const superUserName = 'Super User';
+    const superRole = await buildDomainRole(superUserName, domain1, null);
+    
+    const premiumUserName = 'Premium User';
+    const premiumRole = await buildDomainRole(premiumUserName, domain1, superRole.id);
+    const basicUserName = 'Basic User';
+    let basicRole = await buildDomainRole(basicUserName, domain1, premiumRole.id);
+
+    await DomainRole.delete({ domainId: domain1.id, id: premiumRole.id});
+
+    basicRole = await DomainRole.findOne({ _id: basicRole.id });
+    expect(basicRole.parentId).toEqual(superRole.id);
+    
+    done();
+  });
+  
 });
 
