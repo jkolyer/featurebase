@@ -1,4 +1,5 @@
 import Domain from '../../server/models/Domain';
+import DomainRole from '../../server/models/DomainRole';
 import Team from '../../server/models/Team';
 import User from '../../server/models/User';
 import { generateNumberSlug, generateSlug } from '../../server/utils/slugify';
@@ -68,4 +69,13 @@ let buildDomain = function() {
   }
 }();
   
-export { owner, ownerTeam, buildDomain }
+let buildDomainRole = function() {
+  return async (name, domain, parentId) => {
+    const role = await DomainRole.add({ domainId: domain.id,
+                                        name: name,
+                                        parentId: parentId });
+    return role;
+  }
+}();
+
+export { owner, ownerTeam, buildDomain, buildDomainRole }

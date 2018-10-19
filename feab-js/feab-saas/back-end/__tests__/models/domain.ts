@@ -2,7 +2,7 @@ import Domain from '../../server/models/Domain';
 import DomainRole from '../../server/models/DomainRole';
 import * as mongoose from 'mongoose';
 import * as _ from 'lodash';
-import { owner, ownerTeam, buildDomain } from './modelBuilder'
+import { owner, ownerTeam, buildDomain, buildDomainRole } from './modelBuilder'
 
 describe('creating domains', () => {
 
@@ -12,6 +12,7 @@ describe('creating domains', () => {
   
   beforeEach(async () => {
     await Domain.remove({});
+    await DomainRole.remove({});
   });
   
   test('should be valid', async (done) => {
@@ -65,15 +66,7 @@ describe('creating domains', () => {
 });
 
 describe('creating domain roles', () => {
-  let buildDomainRole = function() {
-    return async (name, domain, parentId) => {
-      const role = await DomainRole.add({ domainId: domain.id,
-                                          name: name,
-                                          parentId: parentId });
-      return role;
-    }
-  }();
-
+  
   beforeAll(async () => {
     await mongoose.connect(process.env.MONGO_URL_TEST);
   });
@@ -146,6 +139,9 @@ describe('creating domain roles', () => {
   });
   
   test('should updated childs parent on delete', async (done) => {
+    await Domain.remove({});
+    await DomainRole.remove({});
+    
     const domain1 = await buildDomain('Adhoc');
     
     const superUserName = 'Super User';
@@ -156,7 +152,7 @@ describe('creating domain roles', () => {
     const basicUserName = 'Basic User';
     let basicRole = await buildDomainRole(basicUserName, domain1, premiumRole.id);
 
-    await DomainRole.delete({ domainId: domain1.id, id: premiumRole.id});
+    await DomainRole.delete({ domainId: domain1.id, domainRole: premiumRole});
 
     basicRole = await DomainRole.findOne({ _id: basicRole.id });
     expect(basicRole.parentId).toEqual(superRole.id);
