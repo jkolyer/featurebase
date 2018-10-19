@@ -43,6 +43,7 @@ interface IFeatureDocument extends mongoose.Document {
   parentId: string;
   name: string;
   slug: string;
+  feabSemver: string;
   createdAt: Date;
 }
 
@@ -69,37 +70,14 @@ interface IFeatureModel extends mongoose.Model<IFeatureDocument> {
     feabSemver: string;
   }): Promise<IFeatureDocument>;
 
-  edit({
-    domainId,
-    id,
-    name,
+  delete({
+    feature,
   }: {
-    domainId: string;
-    id: string;
-    name: string;
-  }): Promise<{ domainRoleId: string }>;
-
-  delete({ domainId, id }: { domainId: string; id: string }): Promise<{ domainRoleId: string }>;
+    feature: IFeatureDocument,
+  }): Promise<{ featureId: string }>;
 }
 
 class FeatureClass extends mongoose.Model {
-  public static async checkPermission({ domainId, parentId }) {
-    if (!domainId) {
-      throw {
-        name: 'FeatureCheckPermission',
-        message: 'Missing domainId',
-      };
-    }
-    if (parentId) {
-      const parent = await this.findById(parentId).lean();
-      if (!parent) {
-        throw {
-          name: 'FeatureCheckPermission',
-          message: `Parent not found with id ${parentId}`,
-        };
-      }
-    }
-  }
 
   public static async getList({ domainRoleId }) {
     // await this.checkPermission({ domainId, parentId: null });
@@ -120,7 +98,7 @@ class FeatureClass extends mongoose.Model {
         message: 'Missing name',
       };
     }
-    await this.checkPermission({ domainId, parentId });
+    // await this.checkPermission({ domainId, parentId });
 
     const existing = await this.findOne({ domainId,
                                           domainRoleId,
@@ -147,60 +125,18 @@ class FeatureClass extends mongoose.Model {
     });
   }
 
-  public static async edit({ domainId, id, name }) {
-    if (!id) {
-      throw {
-        name: 'FeatureEditError',
-        message: 'Missing feature identifier',
-      };
-    }
-
-    const feature = await this.findById(id)
-      .select('domainRoleId domainId')
-      .lean();
-
-    /*
-    const { team } = await this.checkPermission({
-      domainId,
-      domainRoleId: feature.domainRoleId,
-    });
-    */
-
-    if (feature.domainId !== domainId) {
-      throw {
-        name: 'FeatureEditError',
-        message: 'Permission denied. Only creating user.',
-      };
-    }
-    await this.updateOne(
-      { _id: id },
-      { name },
-    );
-    return { domainRoleId: feature.domainRoleId };
-  }
-
   // public static async delete({ domainId, id }) {
-  public static async delete({ id }) {
-    if (!id) {
+  public static async delete({ feature }) {
+    if (!feature) {
       throw {
         name: 'FeatureDeleteError',
         message: 'missing feature identifier',
       };
     }
-    const feature = await this.findById(id)
-      .select('domainRoleId')
-      .lean();
-
-    if (!feature) {
-      throw {
-        name: 'FeatureDeleteError',
-        message: 'missing feature',
-      };
-    }
     // await this.checkPermission({ domainId, domainRoleId: null });
 
     // update parentId of all children
-    const filter: any = { parentId: id };
+    const filter: any = { parentId: feature.id };
     const features: any[] = await this.find(filter);
 
     _.forEach(features, async child => {
@@ -210,9 +146,9 @@ class FeatureClass extends mongoose.Model {
       );
     });
 
-    await this.deleteOne({ _id: id });
+    await this.deleteOne({ _id: feature.id });
 
-    return { domainRoleId: feature.domainRoleId };
+    return { featureId: feature.id };
   }
 
   public static findBySlug(domainRoleId: string, slug: string) {
@@ -223,12 +159,12 @@ class FeatureClass extends mongoose.Model {
     await this.findOne({ _id: parentId });
   }
 
-  public static async findChildren({ domainRoleId }) {
-    const filter: any = { parentId: domainRoleId };
-    const domainRoles: any[] = await this.find(filter,
-                                               null,
-                                               { sort: { createdAt: 1 }});
-    return domainRoles;
+  public static async findChildren({ featureId }) {
+    const filter: any = { parentId: featureId };
+    const features: any[] = await this.find(filter,
+                                            null,
+                                            { sort: { createdAt: 1 }});
+    return features;
   }
 
 }

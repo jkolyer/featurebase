@@ -5,17 +5,13 @@ import User from '../../server/models/User';
 import { generateNumberSlug, generateSlug } from '../../server/utils/slugify';
 
 let owner = function() {
-  let userId;
-  return async () => {
-    if (userId) return await User.findById(userId);
+  return async (email: string = null) => {
+    if (!email) email = 'foo+bar@example.com';
 
-    const email = 'foo+bar@example.com';
     let usr = await User.findOne({ email });
     if (usr) {
-      userId = usr.id;
       return usr;
     }
-
     const dName = 'Jim McBob';
     const slug = await generateSlug(User, dName);
     usr = await User.create({
@@ -28,7 +24,6 @@ let owner = function() {
       slug,
       defaultTeamSlug: '',
     });
-    userId = usr.id;
     return usr;
   }
 }();
@@ -58,8 +53,8 @@ let ownerTeam = function() {
 }();
 
 let buildDomain = function() {
-  return async (dname) => {
-    const domainOwner = await owner();
+  return async (dname: string, email: string = null) => {
+    const domainOwner = await owner(email);
     const domainTeam = await ownerTeam(domainOwner);
 
     const domain = await Domain.add({ userId: domainOwner.id,
@@ -78,4 +73,18 @@ let buildDomainRole = function() {
   }
 }();
 
-export { owner, ownerTeam, buildDomain, buildDomainRole }
+let buildDomainAndRole = function() {
+  return async (domainName: string, domainRoleName: string) => {
+    const domain = await buildDomain(domainName);
+    const domainRole = await buildDomainRole(domainRoleName, domain, null);
+    return [domain, domainRole];
+  }
+}();
+
+export {
+  buildDomain,
+  buildDomainRole,
+  buildDomainAndRole,
+  owner,
+  ownerTeam,
+}

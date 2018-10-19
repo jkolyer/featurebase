@@ -2,7 +2,10 @@ import Domain from '../../server/models/Domain';
 import DomainRole from '../../server/models/DomainRole';
 import * as mongoose from 'mongoose';
 import * as _ from 'lodash';
-import { owner, ownerTeam, buildDomain, buildDomainRole } from './modelBuilder'
+import { owner,
+         ownerTeam,
+         buildDomain,
+         buildDomainRole } from './modelBuilder'
 
 describe('creating domains', () => {
 
