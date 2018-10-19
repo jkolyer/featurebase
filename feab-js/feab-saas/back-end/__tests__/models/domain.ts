@@ -190,5 +190,28 @@ describe('creating domain roles', () => {
     done();
   });
   
+  test('should have parent-child role relationships', async (done) => {
+    const domain1 = await buildDomain('Adhoc');
+    
+    const superUserName = 'Super User';
+    const superRole = await buildDomainRole(superUserName, domain1, null);
+    
+    const premiumUserName = 'Premium User';
+    const premiumRole = await buildDomainRole(premiumUserName, domain1, superRole.id);
+    const basicUserName = 'Basic User';
+    const basicRole = await buildDomainRole(basicUserName, domain1, premiumRole.id);
+
+    let parent = await DomainRole.findParent({ parentId: premiumRole.parentId });
+    expect(parent.name).toEqual(superUserName);
+
+    parent = await DomainRole.findParent({ parentId: basicRole.parentId });
+    expect(parent.name).toEqual(premiumUserName);
+
+    const children = await DomainRole.findChildren({ domainRoleId: superRole.id });
+    expect(children[0].id).toEqual(premiumRole.id);
+    
+    done();
+  });
+  
 });
 
