@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
 import { IDomainDocument } from './Domain';
 
@@ -111,12 +110,12 @@ class DomainRoleClass extends mongoose.Model {
     const filter: any = { parent: domainRole };
     const domainRoles: any[] = await this.find(filter);
 
-    _.forEach(domainRoles, async dRole => {
+    for (const dRole of domainRoles) {
       await this.updateOne(
         { _id: dRole.id },
         { parent: roleParent },
       );
-    });
+    }
     await this.deleteOne({ _id: domainRole.id });
 
     return { parent: roleParent };

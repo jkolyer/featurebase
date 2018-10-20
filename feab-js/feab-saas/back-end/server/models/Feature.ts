@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
 import * as semver from 'semver';
 import { IDomainDocument } from './Domain';
@@ -89,13 +88,21 @@ interface IFeatureModel extends mongoose.Model<IFeatureDocument> {
     feature: IFeatureDocument;
   }): Promise<{ featureId: string }>;
 
+  findChildren({
+    feature,
+  }: {
+    feature: IFeatureDocument;
+  }): Promise<IFeatureDocument[]>;
+
   bumpVersion({
     feature,
     part,
+    parent,
   }: {
     feature: IFeatureDocument;
     part: string;
-  }): Promise<{ feature: string }>;
+    parent: IFeatureDocument;
+  }): Promise<IFeatureDocument>;
 
   addChildFeature({
     name,
@@ -163,12 +170,12 @@ class FeatureClass extends mongoose.Model {
     const filter: any = { parent: feature };
     const features: any[] = await this.find(filter);
 
-    _.forEach(features, async child => {
+    for (const child of features) {
       await this.updateOne(
         { _id: child.id },
         { parent: feature.parent },
       );
-    });
+    }
     await this.deleteOne({ _id: feature.id });
 
     return { feature };
@@ -186,19 +193,22 @@ class FeatureClass extends mongoose.Model {
     return features;
   }
 
-  public static async bumpVersion({ feature, part }) {
+  public static async bumpVersion({ feature, part, parent }) {
     const newVersion = semver.inc(feature.feabSemver, part);
-    feature.feabSemver = newVersion;
 
-    await this.updateOne(
-      { _id: feature.id },
-      { feabSemver: newVersion },
-    );
+    const clone = await Feature.add({ name: feature.name,
+                                      domain: feature.domain,
+                                      domainRole: feature.domainRole,
+                                      parent,
+                                      feabSemver: newVersion });
 
     const childFeatures = await this.findChildren({ feature });
-    await _.forEach(childFeatures, async childFeature => {
-      await Feature.bumpVersion({ feature: childFeature, part });
-    });
+    for (const child of childFeatures) {
+      await Feature.bumpVersion({ feature: child,
+                                  part,
+                                  parent: clone });
+    }
+    return clone;
   }
 
   public static async addChildFeature({ name, parentFeature }) {

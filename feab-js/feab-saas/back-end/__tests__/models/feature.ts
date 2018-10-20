@@ -37,32 +37,6 @@ describe('creating features', () => {
     }
   });
   
-  test('increment semver', async (done) => {
-    let feature = await authorizationFeature();
-    
-    let part = 'patch';
-    await Feature.bumpVersion({ feature, part });
-    expect(feature.feabSemver).toEqual('0.0.1');
-    
-    part = 'minor';
-    await Feature.bumpVersion({ feature, part });
-    expect(feature.feabSemver).toEqual('0.1.0');
-    
-    part = 'patch';
-    await Feature.bumpVersion({ feature, part });
-    expect(feature.feabSemver).toEqual('0.1.1');
-    
-    part = 'major';
-    await Feature.bumpVersion({ feature, part });
-    expect(feature.feabSemver).toEqual('1.0.0');
-
-    // make sure what's stored in the db is expected
-    feature = await Feature.findOne({ _id: feature });
-    expect(feature.feabSemver).toEqual('1.0.0');
-    
-    done();
-  });
-
   test('add child features', async (done) => {
     const feature = await authorizationFeature();
     const register = 'Register';
@@ -77,29 +51,57 @@ describe('creating features', () => {
     
     done();
   });
+
+  test('increment semver', async (done) => {
+    let feature = await authorizationFeature();
+    
+    let part = 'patch';
+    const initialFeature = feature;
+    feature = await Feature.bumpVersion({ feature, part, parent: null });
+    expect(feature.feabSemver).toEqual('0.0.1');
+    expect(feature.id).not.toEqual(initialFeature.id);
+    
+    part = 'minor';
+    feature = await Feature.bumpVersion({ feature, part, parent: null });
+    expect(feature.feabSemver).toEqual('0.1.0');
+    
+    part = 'patch';
+    feature = await Feature.bumpVersion({ feature, part, parent: null });
+    expect(feature.feabSemver).toEqual('0.1.1');
+    
+    part = 'major';
+    feature = await Feature.bumpVersion({ feature, part, parent: null });
+    expect(feature.feabSemver).toEqual('1.0.0');
+    
+    done();
+  });
   
   test('bump semver in child features', async (done) => {
-    const feature = await authorizationFeature();
-    const register = 'Register';
-    let child = await Feature.addChildFeature({ name: register,
-                                                parentFeature: feature
-                                              });
-    expect(child.parent.id).toEqual(feature.id);
-    expect(child.feabSemver).toEqual('0.0.0');
+    let authorize = await authorizationFeature();
+    const register = await Feature.addChildFeature({ name: 'Register',
+                                                     parentFeature: authorize });
+    expect(register.parent.id).toEqual(authorize.id);
+    expect(register.feabSemver).toEqual('0.0.0');
+    
+    const confirm = await Feature.addChildFeature({ name: 'Confirmation',
+                                                    parentFeature: register });
+    expect(confirm.parent.id).toEqual(register.id);
+    expect(confirm.feabSemver).toEqual('0.0.0');
     
     const part = 'patch';
-    await Feature.bumpVersion({ feature, part });
-    expect(feature.feabSemver).toEqual('0.0.1');
-
-    // NOTE:  this has a race condition which I am skipping for now
-    /*
-    const childId = child.id
-    child = await Feature
-      .findOne({ _id: childId })
-      .lean();
-    expect(child.feabSemver).toEqual('0.0.1');
-    */
+    const authorizeBump = await Feature.bumpVersion({ feature: authorize,
+                                                      part,
+                                                      parent:null,
+                                                    });
+    expect(authorizeBump.feabSemver).toEqual('0.0.1');
+    
+    const children = await Feature.findChildren({ feature: authorizeBump });
+    expect(children.length).toEqual(1);
+    expect(children[0].name).toEqual('Register');
+    expect(children[0].feabSemver).toEqual(authorizeBump.feabSemver);
+    expect(children[0].id).not.toEqual(register.id);
     done();
+
   });
   
 });
