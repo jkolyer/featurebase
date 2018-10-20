@@ -130,17 +130,17 @@ describe('creating domain roles', () => {
     const superRole = await buildDomainRole(superUserName, domain1, null);
     
     const premiumUserName = 'Premium User';
-    const premiumRole = await buildDomainRole(premiumUserName, domain1, superRole.id);
+    const premiumRole = await buildDomainRole(premiumUserName, domain1, superRole);
     const basicUserName = 'Basic User';
-    const basicRole = await buildDomainRole(basicUserName, domain1, premiumRole.id);
+    const basicRole = await buildDomainRole(basicUserName, domain1, premiumRole);
 
-    let parent = await DomainRole.findOne({ _id: premiumRole.parentId });
+    let parent = await DomainRole.findOne({ _id: premiumRole.parent.id });
     expect(parent.name).toEqual(superUserName);
 
-    parent = await DomainRole.findOne({ _id: basicRole.parentId });
+    parent = await DomainRole.findOne({ _id: basicRole.parent.id });
     expect(parent.name).toEqual(premiumUserName);
 
-    const children = await DomainRole.findChildren({ domainRoleId: superRole.id });
+    const children = await DomainRole.findChildren({ domainRole: superRole });
     expect(children[0].id).toEqual(premiumRole.id);
     
     done();
@@ -156,16 +156,20 @@ describe('creating domain roles', () => {
     const superRole = await buildDomainRole(superUserName, domain1, null);
     
     const premiumUserName = 'Premium User';
-    const premiumRole = await buildDomainRole(premiumUserName, domain1, superRole.id);
+    const premiumRole = await buildDomainRole(premiumUserName, domain1, superRole);
     const basicUserName = 'Basic User';
-    let basicRole = await buildDomainRole(basicUserName, domain1, premiumRole.id);
+    let basicRole = await buildDomainRole(basicUserName, domain1, premiumRole);
 
     await DomainRole.delete({ domainRole: premiumRole});
 
-    basicRole = await DomainRole.findOne({ _id: basicRole.id });
-    expect(basicRole.parentId).toEqual(superRole.id);
-    
-    done();
+    basicRole = await DomainRole
+      .findOne({ _id: basicRole.id })
+      .populate('parent')
+      .exec(function(err, role) {
+        expect(err).toBeNull();
+        expect(role.parent.id).toEqual(superRole.id);
+        done();
+      });
   });
   
 });

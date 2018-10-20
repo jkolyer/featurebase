@@ -65,10 +65,10 @@ let buildDomain = function() {
 }();
   
 let buildDomainRole = function() {
-  return async (name, domain, parentId) => {
+  return async (name, domain, parent) => {
     const role = await DomainRole.add({ domain: domain,
                                         name: name,
-                                        parentId: parentId });
+                                        parent: parent });
     return role;
   }
 }();

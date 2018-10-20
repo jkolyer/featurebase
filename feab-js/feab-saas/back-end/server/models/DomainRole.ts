@@ -5,10 +5,6 @@ import { IDomainDocument } from './Domain';
 import { generateSlug } from '../utils/slugify';
 
 const mongoSchema = new mongoose.Schema({
-  parentId: {
-    type: String,
-    required: false,
-  },
   name: {
     type: String,
     required: true,
@@ -27,13 +23,18 @@ const mongoSchema = new mongoose.Schema({
     ref: 'Domain',
     required: true,
   },
+  parent: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'DomainRole',
+    required: false,
+  },
 });
 
 mongoSchema.index({ name: 'text' });
 
 interface IDomainRoleDocument extends mongoose.Document {
   domain: IDomainDocument;
-  parentId: string;
+  parent: IDomainRoleDocument;
   name: string;
   slug: string;
   createdAt: Date;
@@ -49,11 +50,11 @@ interface IDomainRoleModel extends mongoose.Model<IDomainRoleDocument> {
   add({
     name,
     domain,
-    parentId,
+    parent,
   }: {
     name: string;
     domain: IDomainDocument;
-    parentId: string;
+    parent: IDomainRoleDocument;
   }): Promise<IDomainRoleDocument>;
 
   delete({
@@ -62,59 +63,22 @@ interface IDomainRoleModel extends mongoose.Model<IDomainRoleDocument> {
     domainRole: IDomainRoleDocument;
   }): Promise<{ parentId: string }>;
 
-  findParent({
-    parentId,
-  }: {
-    parentId: string;
-  }): Promise<IDomainRoleDocument>;
-
   findChildren({
-    domainRoleId,
+    domainRole,
   }: {
-    domainRoleId: string;
+    domainRole: IDomainRoleDocument;
   }): Promise<IDomainRoleDocument[]>;
 
 }
 
 class DomainRoleClass extends mongoose.Model {
-  public static async checkPermission({ domainId, parentId }) {
-    if (!domainId) {
-      throw {
-        name: 'DomainRoleCheckPermission',
-        message: 'Missing domainId',
-      };
-    }
-    if (parentId) {
-      const parent = await this.findById(parentId).lean();
-      if (!parent) {
-        throw {
-          name: 'DomainRoleCheckPermission',
-          message: `Parent not found with id ${parentId}`,
-        };
-      }
-    }
-  }
-
-  public static async getList({ domainId, parentId }) {
-    await this.checkPermission({ domainId, parentId });
-
-    const filter: any = { domainId };
-
-    const domainRoles: any[] = await this.find(filter,
-                                               null,
-                                               { sort: { createdAt: 1 }}).lean();
-
-    return { domainRoles };
-  }
-
-  public static async add({ name, domain, parentId }) {
+  public static async add({ name, domain, parent }) {
     if (!name) {
       throw {
         name: 'DomainRoleAddError',
         message: 'Missing name',
       };
     }
-    // await this.checkPermission({ domainId, parentId });
 
     const existing = await this.findOne({ domain, name });
     if (existing) {
@@ -127,7 +91,7 @@ class DomainRoleClass extends mongoose.Model {
 
     return this.create({
       domain,
-      parentId,
+      parent,
       name,
       slug,
       createdAt: new Date(),
@@ -141,34 +105,30 @@ class DomainRoleClass extends mongoose.Model {
         message: 'Missing identifier',
       };
     }
-    const roleParentId = domainRole.parentId;
+    const roleParent = domainRole.parent;
 
     // update parentId of all children
-    const filter: any = { parentId: domainRole.id };
+    const filter: any = { parent: domainRole };
     const domainRoles: any[] = await this.find(filter);
 
     _.forEach(domainRoles, async dRole => {
       await this.updateOne(
         { _id: dRole.id },
-        { parentId: roleParentId },
+        { parent: roleParent },
       );
     });
 
     await this.deleteOne({ _id: domainRole.id });
 
-    return { parentId: roleParentId };
+    return { parent: roleParent };
   }
 
   public static findBySlug(domainId: string, slug: string) {
     return this.findOne({ domainId, slug }).lean();
   }
 
-  public static async findParent({ parentId }) {
-    await this.findOne({ _id: parentId });
-  }
-
-  public static async findChildren({ domainRoleId }) {
-    const filter: any = { parentId: domainRoleId };
+  public static async findChildren({ domainRole }) {
+    const filter: any = { parent: domainRole };
     const domainRoles: any[] = await this.find(filter,
                                                null,
                                                { sort: { createdAt: 1 }});
