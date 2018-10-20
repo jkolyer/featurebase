@@ -1,4 +1,4 @@
-import Domain from '../../server/models/Domain';
+import { Domain } from '../../server/models/Domain';
 import DomainRole from '../../server/models/DomainRole';
 import Team from '../../server/models/Team';
 import User from '../../server/models/User';
@@ -66,7 +66,7 @@ let buildDomain = function() {
   
 let buildDomainRole = function() {
   return async (name, domain, parentId) => {
-    const role = await DomainRole.add({ domainId: domain.id,
+    const role = await DomainRole.add({ domain: domain,
                                         name: name,
                                         parentId: parentId });
     return role;

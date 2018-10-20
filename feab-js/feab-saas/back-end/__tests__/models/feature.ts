@@ -5,6 +5,16 @@ import * as mongoose from 'mongoose';
 import * as _ from 'lodash';
 import { buildDomainRole, buildDomainAndRole } from './modelBuilder'
 
+// let guestDomainRole = function() {
+//   return async () => {
+//     const objs = await buildDomainAndRole('Site', 'Admin');
+//     const siteDomain = objs[0];
+//     const adminRole = objs[1];
+//     const guestRole = await buildDomainRole('Guest', siteDomain, adminRole.id);
+//     return guestRole;
+//   }
+// }();
+
 describe('creating features', () => {
 
   beforeAll(async () => {
@@ -35,6 +45,21 @@ describe('creating features', () => {
       done();
     });
   });
+  
+  // test('invalid semver', async (done) => {
+  //   const guestRole = await guestDomainRole();
+
+  //   const feature = await Feature.add({ name: 'Authorization',
+  //                                       domainId: siteDomain.id,
+  //                                       domainRoleId: guestRole.id,
+  //                                       parentId: null,
+  //                                       feabSemver: '0.x.0' })
+    
+  //   feature.validate((err) => {
+  //     expect(err).toBeNull();
+  //     done();
+  //   });
+  // });
   
 });
 

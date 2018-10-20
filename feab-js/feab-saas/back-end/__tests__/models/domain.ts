@@ -1,4 +1,4 @@
-import Domain from '../../server/models/Domain';
+import { Domain } from '../../server/models/Domain';
 import DomainRole from '../../server/models/DomainRole';
 import * as mongoose from 'mongoose';
 import * as _ from 'lodash';
@@ -81,10 +81,15 @@ describe('creating domain roles', () => {
   
   test('should be valid role', async (done) => {
     const domain = await buildDomain('Site');
-    const domainRole = await buildDomainRole('Admin', domain, null);
+    let domainRole = await buildDomainRole('Admin', domain, null);
 
     expect(domainRole.slug).toEqual('admin');
     expect(domainRole.name).toEqual('Admin');
+    expect(domainRole.domain).not.toBeNull();
+
+    // make sure we can view the domain property from freshly fetched doc
+    domainRole = await DomainRole.findOne({ _id: domainRole.id });
+    expect(domainRole.domain).not.toBeNull();
     
     domainRole.validate((err) => {
       expect(err).toBeNull();

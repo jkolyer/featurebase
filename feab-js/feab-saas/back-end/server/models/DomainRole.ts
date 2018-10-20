@@ -1,13 +1,10 @@
 import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
+import { IDomainDocument } from './Domain';
 
 import { generateSlug } from '../utils/slugify';
 
 const mongoSchema = new mongoose.Schema({
-  domainId: {
-    type: String,
-    required: true,
-  },
   parentId: {
     type: String,
     required: false,
@@ -25,12 +22,16 @@ const mongoSchema = new mongoose.Schema({
     required: true,
     default: Date.now,
   },
+  domain: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Domain',
+  },
 });
 
 mongoSchema.index({ name: 'text' });
 
 interface IDomainRoleDocument extends mongoose.Document {
-  domainId: string;
+  domain: IDomainDocument;
   parentId: string;
   name: string;
   slug: string;
@@ -46,11 +47,11 @@ interface IDomainRoleModel extends mongoose.Model<IDomainRoleDocument> {
 
   add({
     name,
-    domainId,
+    domain,
     parentId,
   }: {
     name: string;
-    domainId: string;
+    domain: IDomainDocument;
     parentId: string;
   }): Promise<IDomainRoleDocument>;
 
@@ -117,27 +118,26 @@ class DomainRoleClass extends mongoose.Model {
     return { domainRoles };
   }
 
-  public static async add({ name, domainId, parentId }) {
+  public static async add({ name, domain, parentId }) {
     if (!name) {
       throw {
         name: 'DomainRoleAddError',
         message: 'Missing name',
       };
     }
-    await this.checkPermission({ domainId, parentId });
+    // await this.checkPermission({ domainId, parentId });
 
-    const existing = await this.findOne({ domainId, name });
+    const existing = await this.findOne({ domain, name });
     if (existing) {
       throw {
         name: 'DuplicateDomainRoleName',
         message: `domain role with name ${name} already exists`,
       };
     }
-
     const slug = await generateSlug(this, name);
 
     return this.create({
-      domainId,
+      domain,
       parentId,
       name,
       slug,

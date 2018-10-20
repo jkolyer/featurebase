@@ -195,4 +195,4 @@ mongoSchema.loadClass(DomainClass);
 
 const Domain = mongoose.model<IDomainDocument, IDomainModel>('Domain', mongoSchema);
 
-export default Domain;
+export { Domain, IDomainDocument };

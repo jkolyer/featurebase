@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
+import * as semver from 'semver';
 
 import { generateSlug } from '../utils/slugify';
 
@@ -27,6 +28,12 @@ const mongoSchema = new mongoose.Schema({
   feabSemver: {
     type: String,
     required: true,
+    validate: {
+      validator: val => {
+        return !!semver.valid(val);
+      },
+      message: props => `${props.value} is not a valid semver`,
+    },
   },
   createdAt: {
     type: Date,
