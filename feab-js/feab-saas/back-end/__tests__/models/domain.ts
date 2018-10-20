@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { owner,
          ownerTeam,
          buildDomain,
-         buildDomainRole } from './modelBuilder'
+         buildDomainRole } from './domainBuilders'
 
 describe('creating domains', () => {
 

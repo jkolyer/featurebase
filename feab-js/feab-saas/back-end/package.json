@@ -32,6 +32,7 @@
     "testRegex": "/__tests__/.*\\.(ts|tsx|js)$"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.117",
     "@types/mongoose": "^5.2.19",
     "@types/node": "^10.11.7",
     "aws-sdk": "^2.333.0",
@@ -48,8 +49,8 @@
     "helmet": "^3.14.0",
     "highlight.js": "^9.12.0",
     "isomorphic-unfetch": "^3.0.0",
+    "javascript-state-machine": "^3.1.0",
     "lodash": "^4.17.11",
-    "@types/lodash": "^4.14.117",
     "marked": "^0.5.1",
     "mongoose": "^5.3.3",
     "passport": "^0.4.0",

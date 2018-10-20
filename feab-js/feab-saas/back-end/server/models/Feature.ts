@@ -3,6 +3,7 @@ import * as mongoose from 'mongoose';
 import * as semver from 'semver';
 import { IDomainDocument } from './Domain';
 import { IDomainRoleDocument } from './DomainRole';
+// import { logger } from '../utils/logs';
 
 import { generateSlug } from '../utils/slugify';
 
@@ -196,7 +197,7 @@ class FeatureClass extends mongoose.Model {
 
     const childFeatures = await this.findChildren({ feature });
     await _.forEach(childFeatures, async childFeature => {
-      await this.bumpVersion({ feature: childFeature, part });
+      await Feature.bumpVersion({ feature: childFeature, part });
     });
   }
 
