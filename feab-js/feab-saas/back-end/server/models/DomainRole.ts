@@ -25,6 +25,7 @@ const mongoSchema = new mongoose.Schema({
   domain: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Domain',
+    required: true,
   },
 });
 
