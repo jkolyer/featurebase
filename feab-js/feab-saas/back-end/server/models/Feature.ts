@@ -166,15 +166,10 @@ class FeatureClass extends mongoose.Model {
         message: 'missing feature identifier',
       };
     }
-    // update parent of all children
-    const filter: any = { parent: feature };
-    const features: any[] = await this.find(filter);
 
-    for (const child of features) {
-      await this.updateOne(
-        { _id: child.id },
-        { parent: feature.parent },
-      );
+    const childFeatures = await this.findChildren({ feature });
+    for (const child of childFeatures) {
+      await Feature.delete({ feature: child });
     }
     await this.deleteOne({ _id: feature.id });
 

@@ -91,8 +91,7 @@ describe('creating features', () => {
     const part = 'patch';
     const authorizeBump = await Feature.bumpVersion({ feature: authorize,
                                                       part,
-                                                      parent:null,
-                                                    });
+                                                      parent:null });
     expect(authorizeBump.feabSemver).toEqual('0.0.1');
     
     const children = await Feature.findChildren({ feature: authorizeBump });
@@ -103,6 +102,26 @@ describe('creating features', () => {
     done();
 
   });
+
+  
+  test('delete features with children', async (done) => {
+    const authorize = await authorizationFeature();
+    const register = await Feature.addChildFeature({ name: 'Register',
+                                                     parentFeature: authorize });
+    const confirm = await Feature.addChildFeature({ name: 'Confirmation',
+                                                    parentFeature: register });
+    await Feature.delete({ feature: authorize });
+
+    let feature = await Feature.findOne({ _id: authorize.id });
+    expect(feature).toEqual(null);
+    
+    feature = await Feature.findOne({ _id: register.id });
+    expect(feature).toEqual(null);
+    
+    feature = await Feature.findOne({ _id: confirm.id });
+    expect(feature).toEqual(null);
+    
+    done();
+  });
   
 });
-
