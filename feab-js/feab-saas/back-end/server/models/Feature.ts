@@ -50,6 +50,11 @@ const mongoSchema = new mongoose.Schema({
     required: true,
     default: Date.now,
   },
+  updatedAt: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
 });
 
 mongoSchema.index({ name: 'text' });
@@ -63,6 +68,7 @@ interface IFeatureDocument extends mongoose.Document {
   feabSemver: string;
   state: string;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 interface IFeatureModel extends mongoose.Model<IFeatureDocument> {
@@ -127,7 +133,7 @@ class FeatureClass extends mongoose.Model {
 
     const features: any[] = await this.find(filter,
                                            null,
-                                           { sort: { createdAt: 1 }}).lean();
+                                           { sort: { name: 1 }}).lean();
     return { features };
   }
 
@@ -138,22 +144,21 @@ class FeatureClass extends mongoose.Model {
         message: 'Missing name',
       };
     }
-    // await this.checkPermission({ domainId, parentId });
 
     const existing = await this.findOne({ domain,
                                           domainRole,
                                           name,
                                           parent,
-                                          feabSemver,
-                                        });
+                                          feabSemver });
     if (existing) {
       throw {
         name: 'DuplicateFeatureName',
         message: `feature with name ${name} already exists`,
       };
     }
-    const state = parent ? parent.state : DEFAULT_STATE;
+    const state = DEFAULT_STATE;
     const slug = await generateSlug(this, name);
+    const now = new Date();
     return this.create({
       domain,
       domainRole,
@@ -162,7 +167,8 @@ class FeatureClass extends mongoose.Model {
       name,
       slug,
       state,
-      createdAt: new Date(),
+      createdAt: now,
+      updatedAt: now,
     });
   }
 
@@ -192,7 +198,7 @@ class FeatureClass extends mongoose.Model {
     const filter: any = { parent: feature };
     const features: any[] = await this.find(filter,
                                             null,
-                                            { sort: { createdAt: 1 }});
+                                            { sort: { name: 1 }});
     return features;
   }
 
@@ -221,6 +227,8 @@ class FeatureClass extends mongoose.Model {
                                      parent: parentFeature,
                                      feabSemver: parentFeature.feabSemver,
                                    });
+    feature.state = parentFeature.state;
+    await feature.save();
     return feature;
   }
 

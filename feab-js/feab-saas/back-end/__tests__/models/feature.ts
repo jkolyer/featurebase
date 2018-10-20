@@ -1,9 +1,9 @@
 import { Domain } from '../../server/models/Domain';
 import { DomainRole } from '../../server/models/DomainRole';
 import { Feature } from '../../server/models/Feature';
-import { DEFAULT_STATE } from '../../server/utils/FeatureFSM';
+import { createFSM, DEFAULT_STATE } from '../../server/utils/FeatureFSM';
 import * as mongoose from 'mongoose';
-import { authorizationFeature } from './featureBuilders'
+import { authorizationFeature } from '../utils/featureBuilders'
 
 describe('creating features', () => {
 
@@ -104,7 +104,6 @@ describe('creating features', () => {
     done();
 
   });
-
   
   test('delete features with children', async (done) => {
     const authorize = await authorizationFeature();
@@ -123,6 +122,72 @@ describe('creating features', () => {
     feature = await Feature.findOne({ _id: confirm.id });
     expect(feature).toEqual(null);
     
+    done();
+  });
+  
+});
+
+describe('feature states', () => {
+  beforeAll(async () => {
+    await mongoose.connect(process.env.MONGO_URL_TEST);
+  });
+  
+  beforeEach(async () => {
+    await Domain.remove({});
+    await DomainRole.remove({});
+    await Feature.remove({});
+  });
+  
+  test('initial state is default', async (done) => {
+    const authorize = await authorizationFeature();
+    expect(authorize.state).toEqual(DEFAULT_STATE);
+
+    const fsm = createFSM(authorize);
+    expect(fsm.state).toEqual(DEFAULT_STATE);
+
+    done();
+  });
+  
+  test('initial state is feature value', async (done) => {
+    const authorize = await authorizationFeature();
+
+    authorize.state = 'development';
+    await authorize.save();
+    expect(authorize.state).toEqual('development');
+    
+    const fsm = createFSM(authorize);
+    expect(fsm.state).toEqual('development');
+
+    done();
+  });
+  
+  test('child state matches parent', async (done) => {
+    const authorize = await authorizationFeature();
+    authorize.state = 'development';
+    await authorize.save();
+    const register = await Feature.addChildFeature({ name: 'Register',
+                                                     parentFeature: authorize });
+
+    expect(register.state).toEqual('development');
+
+    done();
+  });
+  
+  test('semver bump child state matches parent', async (done) => {
+    const authorize = await authorizationFeature();
+    authorize.state = 'development';
+    await authorize.save();
+    const register = await Feature.addChildFeature({ name: 'Register',
+                                                     parentFeature: authorize });
+    expect(register.state).toEqual('development');
+    
+    const authorizeBump = await Feature.bumpVersion({ feature: authorize,
+                                                      part: 'patch',
+                                                      parent: null });
+    expect(authorizeBump.state).toEqual(DEFAULT_STATE);
+    const children = await Feature.findChildren({ feature: authorizeBump });
+    expect(children[0].state).toEqual(DEFAULT_STATE);
+
     done();
   });
   

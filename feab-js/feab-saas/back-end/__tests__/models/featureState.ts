@@ -3,7 +3,7 @@ import { DomainRole } from '../../server/models/DomainRole';
 import { Feature } from '../../server/models/Feature';
 import * as mongoose from 'mongoose';
 import * as _ from 'lodash';
-import { authorizationFeature, guestDomainRole } from './featureBuilders'
+import { authorizationFeature, guestDomainRole } from '../utils/featureBuilders'
 
 describe('features state management', () => {
 
