@@ -86,6 +86,41 @@ describe('creating features', () => {
   });
 
   test('add child features', async (done) => {
+    const feature = await authorizationFeature();
+    const register = 'Register';
+    const child = await Feature.addChildFeature({ name: register,
+                                                  parentFeature: feature
+                                                });
+    expect(child.name).toEqual(register);
+    expect(child.feabSemver).toEqual(feature.feabSemver);
+    expect(child.domain.id).toEqual(feature.domain.id);
+    expect(child.domainRole.id).toEqual(feature.domainRole.id);
+    expect(child.parent.id).toEqual(feature.id);
+    
+    done();
+  });
+  
+  test('bump semver in child features', async (done) => {
+    const feature = await authorizationFeature();
+    const register = 'Register';
+    let child = await Feature.addChildFeature({ name: register,
+                                                parentFeature: feature
+                                              });
+    expect(child.parent.id).toEqual(feature.id);
+    expect(child.feabSemver).toEqual('0.0.0');
+    
+    const part = 'patch';
+    await Feature.bumpVersion({ feature, part });
+    expect(feature.feabSemver).toEqual('0.0.1');
+
+    const childId = child.id
+    child = await Feature
+      .findOne({ _id: childId })
+      .populate('parent');
+    debugger
+    expect(child.parent.id).toEqual(feature.id);
+    expect(child.feabSemver).toEqual('0.0.1');
+    
     done();
   });
   

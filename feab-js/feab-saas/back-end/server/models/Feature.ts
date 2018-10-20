@@ -96,6 +96,14 @@ interface IFeatureModel extends mongoose.Model<IFeatureDocument> {
     part: string;
   }): Promise<{ feature: string }>;
 
+  addChildFeature({
+    name,
+    parentFeature,
+  }: {
+    name: string;
+    parentFeature: IFeatureDocument;
+  }): Promise<IFeatureDocument>;
+
 }
 
 class FeatureClass extends mongoose.Model {
@@ -180,12 +188,26 @@ class FeatureClass extends mongoose.Model {
   public static async bumpVersion({ feature, part }) {
     const newVersion = semver.inc(feature.feabSemver, part);
     feature.feabSemver = newVersion;
-    await feature.save();
+
+    await this.updateOne(
+      { _id: feature.id },
+      { feabSemver: newVersion },
+    );
 
     const childFeatures = await this.findChildren({ feature });
-    _.forEach(childFeatures, async childFeature => {
+    await _.forEach(childFeatures, async childFeature => {
       await this.bumpVersion({ feature: childFeature, part });
     });
+  }
+
+  public static async addChildFeature({ name, parentFeature }) {
+    const feature = await this.add({ name,
+                                     domain: parentFeature.domain,
+                                     domainRole: parentFeature.domainRole,
+                                     parent: parentFeature,
+                                     feabSemver: parentFeature.feabSemver,
+                                   });
+    return feature;
   }
 
 }
