@@ -5,15 +5,14 @@ import * as mongoose from 'mongoose';
 import * as _ from 'lodash';
 import { buildDomainRole, buildDomainAndRole } from './modelBuilder'
 
-// let guestDomainRole = function() {
-//   return async () => {
-//     const objs = await buildDomainAndRole('Site', 'Admin');
-//     const siteDomain = objs[0];
-//     const adminRole = objs[1];
-//     const guestRole = await buildDomainRole('Guest', siteDomain, adminRole.id);
-//     return guestRole;
-//   }
-// }();
+let guestDomainRole = function() {
+  return async () => {
+    const adminRole = await buildDomainAndRole('Site', 'Admin');
+    const siteDomain = adminRole.domain
+    const guestRole = await buildDomainRole('Guest', siteDomain, adminRole.id);
+    return guestRole;
+  }
+}();
 
 describe('creating features', () => {
 
@@ -28,16 +27,13 @@ describe('creating features', () => {
   });
   
   test('should be valid', async (done) => {
-    const objs = await buildDomainAndRole('Site', 'Admin');
-    const siteDomain = objs[0]
-    const adminRole = objs[1]
-    const guestRole = await buildDomainRole('Guest', siteDomain, adminRole.id);
-
+    const guestRole = await guestDomainRole();
     const feature = await Feature.add({ name: 'Authorization',
-                                        domainId: siteDomain.id,
-                                        domainRoleId: guestRole.id,
-                                        parentId: null,
-                                        feabSemver: '0.0.0' })
+                                        domain: guestRole.domain,
+                                        domainRole: guestRole,
+                                        parent: null,
+                                        feabSemver: '0.0.0'
+                                      });
     expect(feature.slug).toEqual('authorization');
     
     feature.validate((err) => {

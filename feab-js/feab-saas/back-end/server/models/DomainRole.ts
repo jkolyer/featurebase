@@ -107,7 +107,7 @@ class DomainRoleClass extends mongoose.Model {
     }
     const roleParent = domainRole.parent;
 
-    // update parentId of all children
+    // update parent of all children
     const filter: any = { parent: domainRole };
     const domainRoles: any[] = await this.find(filter);
 
@@ -117,14 +117,13 @@ class DomainRoleClass extends mongoose.Model {
         { parent: roleParent },
       );
     });
-
     await this.deleteOne({ _id: domainRole.id });
 
     return { parent: roleParent };
   }
 
-  public static findBySlug(domainId: string, slug: string) {
-    return this.findOne({ domainId, slug }).lean();
+  public static findBySlug(domain: IDomainDocument, slug: string) {
+    return this.findOne({ domain, slug }).lean();
   }
 
   public static async findChildren({ domainRole }) {

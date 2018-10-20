@@ -1,20 +1,25 @@
 import * as _ from 'lodash';
 import * as mongoose from 'mongoose';
 import * as semver from 'semver';
+import { IDomainDocument } from './Domain';
+import { IDomainRoleDocument } from './DomainRole';
 
 import { generateSlug } from '../utils/slugify';
 
 const mongoSchema = new mongoose.Schema({
-  domainId: {
-    type: String,
+  domain: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Domain',
     required: true,
   },
-  domainRoleId: {
-    type: String,
+  domainRole: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'DomainRole',
     required: true,
   },
-  parentId: {
-    type: String,
+  parent: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Feature',
     required: false,
   },
   name: {
@@ -45,9 +50,9 @@ const mongoSchema = new mongoose.Schema({
 mongoSchema.index({ name: 'text' });
 
 interface IFeatureDocument extends mongoose.Document {
-  domainId: string;
-  domainRoleId: string;
-  parentId: string;
+  domain: IDomainDocument;
+  domainRole: IDomainRoleDocument;
+  parent: IFeatureDocument;
   name: string;
   slug: string;
   feabSemver: string;
@@ -56,24 +61,24 @@ interface IFeatureDocument extends mongoose.Document {
 
 interface IFeatureModel extends mongoose.Model<IFeatureDocument> {
   getList({
-    domainId,
-    domainRoleId,
+    domain,
+    domainRole,
   }: {
-    domainId: string;
-    domainRoleId: string;
+    domain: IDomainDocument;
+    domainRole: IDomainRoleDocument;
   }): Promise<{ features: IFeatureDocument[] }>;
 
   add({
     name,
-    domainId,
-    domainRoleId,
-    parentId,
+    domain,
+    domainRole,
+    parent,
     feabSemver,
   }: {
     name: string;
-    domainId: string;
-    domainRoleId: string;
-    parentId: string;
+    domain: IDomainDocument;
+    domainRole: IDomainRoleDocument;
+    parent: IFeatureDocument;
     feabSemver: string;
   }): Promise<IFeatureDocument>;
 
@@ -86,19 +91,16 @@ interface IFeatureModel extends mongoose.Model<IFeatureDocument> {
 
 class FeatureClass extends mongoose.Model {
 
-  public static async getList({ domainRoleId }) {
-    // await this.checkPermission({ domainId, parentId: null });
-
-    const filter: any = { domainRoleId };
+  public static async getList({ domainRole }) {
+    const filter: any = { domainRole };
 
     const features: any[] = await this.find(filter,
                                            null,
                                            { sort: { createdAt: 1 }}).lean();
-
     return { features };
   }
 
-  public static async add({ name, domainId, domainRoleId, parentId, feabSemver }) {
+  public static async add({ name, domain, domainRole, parent, feabSemver }) {
     if (!name) {
       throw {
         name: 'FeatureAddError',
@@ -107,10 +109,10 @@ class FeatureClass extends mongoose.Model {
     }
     // await this.checkPermission({ domainId, parentId });
 
-    const existing = await this.findOne({ domainId,
-                                          domainRoleId,
+    const existing = await this.findOne({ domain,
+                                          domainRole,
                                           name,
-                                          parentId,
+                                          parent,
                                           feabSemver,
                                         });
     if (existing) {
@@ -122,9 +124,9 @@ class FeatureClass extends mongoose.Model {
 
     const slug = await generateSlug(this, name);
     return this.create({
-      domainId,
-      domainRoleId,
-      parentId,
+      domain,
+      domainRole,
+      parent,
       feabSemver,
       name,
       slug,
@@ -140,34 +142,27 @@ class FeatureClass extends mongoose.Model {
         message: 'missing feature identifier',
       };
     }
-    // await this.checkPermission({ domainId, domainRoleId: null });
-
-    // update parentId of all children
-    const filter: any = { parentId: feature.id };
+    // update parent of all children
+    const filter: any = { parent: feature };
     const features: any[] = await this.find(filter);
 
     _.forEach(features, async child => {
       await this.updateOne(
         { _id: child.id },
-        { parentId: feature.parentId },
+        { parent: feature.parent },
       );
     });
-
     await this.deleteOne({ _id: feature.id });
 
-    return { featureId: feature.id };
+    return { feature };
   }
 
-  public static findBySlug(domainRoleId: string, slug: string) {
-    return this.findOne({ domainRoleId, slug }).lean();
+  public static findBySlug(domainRole: IDomainRoleDocument, slug: string) {
+    return this.findOne({ domainRole, slug }).lean();
   }
 
-  public static async findParent({ parentId }) {
-    await this.findOne({ _id: parentId });
-  }
-
-  public static async findChildren({ featureId }) {
-    const filter: any = { parentId: featureId };
+  public static async findChildren({ feature }) {
+    const filter: any = { parent: feature };
     const features: any[] = await this.find(filter,
                                             null,
                                             { sort: { createdAt: 1 }});

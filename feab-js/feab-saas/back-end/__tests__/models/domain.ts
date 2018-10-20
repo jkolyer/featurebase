@@ -160,7 +160,7 @@ describe('creating domain roles', () => {
     const basicUserName = 'Basic User';
     let basicRole = await buildDomainRole(basicUserName, domain1, premiumRole);
 
-    await DomainRole.delete({ domainRole: premiumRole});
+    await DomainRole.delete({ domainRole: premiumRole });
 
     basicRole = await DomainRole
       .findOne({ _id: basicRole.id })

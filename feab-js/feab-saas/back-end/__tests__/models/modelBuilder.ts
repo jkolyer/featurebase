@@ -77,7 +77,7 @@ let buildDomainAndRole = function() {
   return async (domainName: string, domainRoleName: string) => {
     const domain = await buildDomain(domainName);
     const domainRole = await buildDomainRole(domainRoleName, domain, null);
-    return [domain, domainRole];
+    return domainRole;
   }
 }();
 
