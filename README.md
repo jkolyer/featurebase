@@ -12,7 +12,7 @@ The system is accessed through an administration portal, a JSON API, and in-memo
 Features are associated with a given application <i>Role</i> and functional <i>Domain</i>.  <i>Roles</i> describe the type of user acting on your system; <i>domains</i> group your features along functional lines.  They are discussed below.
 
 Feature lifecycle stages are defined as 
-<ol><li>conception</li>
+<ol><li>gestation</li>
   <li>development</li>
   <li>staging</li>
   <li>production</li>
@@ -29,7 +29,7 @@ This table describes how product team members will interact with the FeatureBase
       Member Role
   </td>
     <td>
-      Conception
+      Gestation
   </td>
     <td>
       Development
