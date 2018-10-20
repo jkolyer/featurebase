@@ -1,6 +1,14 @@
 import * as StateMachine from 'javascript-state-machine';
 
-const DEFAULT_STATE = 'gestation';
+const STATES = {
+  gestation: 'gestation',
+  development: 'development',
+  staging: 'staging',
+  production: 'production',
+  deprecated: 'deprecated',
+};
+
+const DEFAULT_STATE = STATES.gestation;
 
 const FeatureFSM = StateMachine.factory({
   transitions: [
@@ -8,11 +16,11 @@ const FeatureFSM = StateMachine.factory({
       from: 'none',
       to: featureState => featureState,
     },
-    { name: 'conceive', from: 'gestation', to: 'development' },
-    { name: 'trial', from: 'development', to: 'staging' },
-    { name: 'retract', from: 'staging', to: 'development' },
-    { name: 'live', from: 'staging', to: 'production' },
-    { name: 'retire', from: '*', to: 'deprecated' },
+    { name: 'conceive', from: STATES.gestation, to: STATES.development },
+    { name: 'trial', from: STATES.development, to: STATES.staging },
+    { name: 'retract', from: STATES.staging, to: STATES.development },
+    { name: 'live', from: STATES.staging, to: STATES.production },
+    { name: 'retire', from: '*', to: STATES.deprecated },
     { name: 'goto',
       from: '*',
       to: gotoState => gotoState,
@@ -36,4 +44,4 @@ const createFSM = feature => {
   return fsm;
 };
 
-export { createFSM, DEFAULT_STATE, FeatureFSM };
+export { createFSM, DEFAULT_STATE, FeatureFSM, STATES };

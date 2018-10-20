@@ -1,7 +1,7 @@
 import { Domain } from '../../server/models/Domain';
 import { DomainRole } from '../../server/models/DomainRole';
 import { Feature } from '../../server/models/Feature';
-import { createFSM, DEFAULT_STATE } from '../../server/utils/FeatureFSM';
+import { createFSM, DEFAULT_STATE, STATES } from '../../server/utils/FeatureFSM';
 import * as mongoose from 'mongoose';
 import { authorizationFeature } from '../utils/featureBuilders'
 
@@ -151,35 +151,35 @@ describe('feature states', () => {
   test('initial state is feature value', async (done) => {
     const authorize = await authorizationFeature();
 
-    authorize.state = 'development';
+    authorize.state = STATES.development;
     await authorize.save();
-    expect(authorize.state).toEqual('development');
+    expect(authorize.state).toEqual(STATES.development);
     
     const fsm = createFSM(authorize);
-    expect(fsm.state).toEqual('development');
+    expect(fsm.state).toEqual(STATES.development);
 
     done();
   });
   
   test('child state matches parent', async (done) => {
     const authorize = await authorizationFeature();
-    authorize.state = 'development';
+    authorize.state = STATES.development;
     await authorize.save();
     const register = await Feature.addChildFeature({ name: 'Register',
                                                      parentFeature: authorize });
 
-    expect(register.state).toEqual('development');
+    expect(register.state).toEqual(STATES.development);
 
     done();
   });
   
   test('semver bump child state matches parent', async (done) => {
     const authorize = await authorizationFeature();
-    authorize.state = 'development';
+    authorize.state = STATES.development;
     await authorize.save();
     const register = await Feature.addChildFeature({ name: 'Register',
                                                      parentFeature: authorize });
-    expect(register.state).toEqual('development');
+    expect(register.state).toEqual(STATES.development);
     
     const authorizeBump = await Feature.bumpVersion({ feature: authorize,
                                                       part: 'patch',
