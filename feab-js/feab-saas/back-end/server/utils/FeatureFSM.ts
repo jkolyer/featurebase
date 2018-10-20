@@ -1,15 +1,9 @@
-import { StateMachine } from 'javascript-state-machine';
+import * as StateMachine from 'javascript-state-machine';
 
-/*
-gestation
-development
-staging
-production
-deprecated
-*/
+const DEFAULT_STATE = 'gestation';
 
 const FeatureFSM = StateMachine.factory({
-  init: 'gestation',
+  init: DEFAULT_STATE,
   transitions: [
     { name: 'conceive', from: 'gestation',  to: 'development' },
     { name: 'trial', from: 'development',  to: 'staging' },
@@ -22,4 +16,4 @@ const FeatureFSM = StateMachine.factory({
   ],
 });
 
-export { FeatureFSM };
+export { FeatureFSM, DEFAULT_STATE };

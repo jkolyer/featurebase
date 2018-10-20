@@ -1,6 +1,7 @@
 import { Domain } from '../../server/models/Domain';
 import { DomainRole } from '../../server/models/DomainRole';
 import { Feature } from '../../server/models/Feature';
+import { DEFAULT_STATE } from '../../server/utils/FeatureFSM';
 import * as mongoose from 'mongoose';
 import { authorizationFeature } from './featureBuilders'
 
@@ -19,6 +20,7 @@ describe('creating features', () => {
   test('should be valid', async (done) => {
     const feature = await authorizationFeature();
     expect(feature.slug).toEqual('authorization');
+    expect(feature.state).toEqual(DEFAULT_STATE);
     expect(feature.feabSemver).toEqual('0.0.0');
     
     feature.validate((err) => {

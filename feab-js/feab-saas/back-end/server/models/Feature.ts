@@ -4,6 +4,7 @@ import { IDomainDocument } from './Domain';
 import { IDomainRoleDocument } from './DomainRole';
 // import { logger } from '../utils/logs';
 
+import { DEFAULT_STATE } from '../utils/FeatureFSM';
 import { generateSlug } from '../utils/slugify';
 
 const mongoSchema = new mongoose.Schema({
@@ -40,6 +41,10 @@ const mongoSchema = new mongoose.Schema({
       message: props => `${props.value} is not a valid semver`,
     },
   },
+  state: {
+    type: String,
+    required: true,
+  },
   createdAt: {
     type: Date,
     required: true,
@@ -56,6 +61,7 @@ interface IFeatureDocument extends mongoose.Document {
   name: string;
   slug: string;
   feabSemver: string;
+  state: string;
   createdAt: Date;
 }
 
@@ -146,6 +152,7 @@ class FeatureClass extends mongoose.Model {
         message: `feature with name ${name} already exists`,
       };
     }
+    const state = parent ? parent.state : DEFAULT_STATE;
     const slug = await generateSlug(this, name);
     return this.create({
       domain,
@@ -154,6 +161,7 @@ class FeatureClass extends mongoose.Model {
       feabSemver,
       name,
       slug,
+      state,
       createdAt: new Date(),
     });
   }
