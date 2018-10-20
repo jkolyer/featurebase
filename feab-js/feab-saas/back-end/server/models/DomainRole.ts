@@ -55,21 +55,9 @@ interface IDomainRoleModel extends mongoose.Model<IDomainRoleDocument> {
     parentId: string;
   }): Promise<IDomainRoleDocument>;
 
-  edit({
-    domainId,
-    id,
-    name,
-  }: {
-    domainId: string;
-    id: string;
-    name: string;
-  }): Promise<{ parentId: string }>;
-
   delete({
-    domainId,
     domainRole,
   }: {
-    domainId: string;
     domainRole: IDomainRoleDocument;
   }): Promise<{ parentId: string }>;
 
@@ -145,7 +133,7 @@ class DomainRoleClass extends mongoose.Model {
     });
   }
 
-  public static async delete({ domainId, domainRole }) {
+  public static async delete({ domainRole }) {
     if (!domainRole) {
       throw {
         name: 'DomainRoleDelete',
@@ -153,7 +141,6 @@ class DomainRoleClass extends mongoose.Model {
       };
     }
     const roleParentId = domainRole.parentId;
-    await this.checkPermission({ domainId, parentId: roleParentId });
 
     // update parentId of all children
     const filter: any = { parentId: domainRole.id };
@@ -193,4 +180,4 @@ mongoSchema.loadClass(DomainRoleClass);
 
 const DomainRole = mongoose.model<IDomainRoleDocument, IDomainRoleModel>('DomainRole', mongoSchema);
 
-export default DomainRole;
+export { DomainRole, IDomainRoleDocument };

@@ -1,6 +1,6 @@
-import Domain from '../../server/models/Domain';
-import DomainRole from '../../server/models/DomainRole';
-import Feature from '../../server/models/Feature';
+import { Domain } from '../../server/models/Domain';
+import { DomainRole } from '../../server/models/DomainRole';
+import { Feature } from '../../server/models/Feature';
 import * as mongoose from 'mongoose';
 import * as _ from 'lodash';
 import { buildDomainRole, buildDomainAndRole } from './modelBuilder'

@@ -180,4 +180,4 @@ mongoSchema.loadClass(FeatureClass);
 
 const Feature = mongoose.model<IFeatureDocument, IFeatureModel>('Feature', mongoSchema);
 
-export default Feature;
+export { Feature, IFeatureDocument };

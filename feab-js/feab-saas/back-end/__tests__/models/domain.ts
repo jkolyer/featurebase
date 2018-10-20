@@ -1,5 +1,5 @@
 import { Domain } from '../../server/models/Domain';
-import DomainRole from '../../server/models/DomainRole';
+import { DomainRole } from '../../server/models/DomainRole';
 import * as mongoose from 'mongoose';
 import * as _ from 'lodash';
 import { owner,
@@ -160,7 +160,7 @@ describe('creating domain roles', () => {
     const basicUserName = 'Basic User';
     let basicRole = await buildDomainRole(basicUserName, domain1, premiumRole.id);
 
-    await DomainRole.delete({ domainId: domain1.id, domainRole: premiumRole});
+    await DomainRole.delete({ domainRole: premiumRole});
 
     basicRole = await DomainRole.findOne({ _id: basicRole.id });
     expect(basicRole.parentId).toEqual(superRole.id);

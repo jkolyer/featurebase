@@ -1,5 +1,5 @@
 import { Domain } from '../../server/models/Domain';
-import DomainRole from '../../server/models/DomainRole';
+import { DomainRole } from '../../server/models/DomainRole';
 import Team from '../../server/models/Team';
 import User from '../../server/models/User';
 import { generateNumberSlug, generateSlug } from '../../server/utils/slugify';
