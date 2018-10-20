@@ -14,6 +14,18 @@ let guestDomainRole = function() {
   }
 }();
 
+let authorizationFeature = function() {
+  return async (version: string = '0.0.0') => {
+    const guestRole = await guestDomainRole();
+    return await Feature.add({ name: 'Authorization',
+                               domain: guestRole.domain,
+                               domainRole: guestRole,
+                               parent: null,
+                               feabSemver: version,
+                             });
+  }
+}();
+
 describe('creating features', () => {
 
   beforeAll(async () => {
@@ -27,14 +39,9 @@ describe('creating features', () => {
   });
   
   test('should be valid', async (done) => {
-    const guestRole = await guestDomainRole();
-    const feature = await Feature.add({ name: 'Authorization',
-                                        domain: guestRole.domain,
-                                        domainRole: guestRole,
-                                        parent: null,
-                                        feabSemver: '0.0.0'
-                                      });
+    const feature = await authorizationFeature();
     expect(feature.slug).toEqual('authorization');
+    expect(feature.feabSemver).toEqual('0.0.0');
     
     feature.validate((err) => {
       expect(err).toBeNull();
@@ -42,20 +49,45 @@ describe('creating features', () => {
     });
   });
   
-  // test('invalid semver', async (done) => {
-  //   const guestRole = await guestDomainRole();
-
-  //   const feature = await Feature.add({ name: 'Authorization',
-  //                                       domainId: siteDomain.id,
-  //                                       domainRoleId: guestRole.id,
-  //                                       parentId: null,
-  //                                       feabSemver: '0.x.0' })
+  test('invalid semver', async (done) => {
+    expect.assertions(1);
+    try {
+      await authorizationFeature('0.x.0');
+    } catch (err) {
+      expect(err.name).toEqual('ValidationError');
+      done();
+    }
+  });
+  
+  test('increment semver', async (done) => {
+    let feature = await authorizationFeature();
     
-  //   feature.validate((err) => {
-  //     expect(err).toBeNull();
-  //     done();
-  //   });
-  // });
+    let part = 'patch';
+    await Feature.bumpVersion({ feature, part });
+    expect(feature.feabSemver).toEqual('0.0.1');
+    
+    part = 'minor';
+    await Feature.bumpVersion({ feature, part });
+    expect(feature.feabSemver).toEqual('0.1.0');
+    
+    part = 'patch';
+    await Feature.bumpVersion({ feature, part });
+    expect(feature.feabSemver).toEqual('0.1.1');
+    
+    part = 'major';
+    await Feature.bumpVersion({ feature, part });
+    expect(feature.feabSemver).toEqual('1.0.0');
+
+    // make sure what's stored in the db is expected
+    feature = await Feature.findOne({ _id: feature });
+    expect(feature.feabSemver).toEqual('1.0.0');
+    
+    done();
+  });
+
+  test('add child features', async (done) => {
+    done();
+  });
   
 });
 

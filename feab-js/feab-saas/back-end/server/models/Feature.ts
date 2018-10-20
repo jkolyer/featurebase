@@ -85,8 +85,17 @@ interface IFeatureModel extends mongoose.Model<IFeatureDocument> {
   delete({
     feature,
   }: {
-    feature: IFeatureDocument,
+    feature: IFeatureDocument;
   }): Promise<{ featureId: string }>;
+
+  bumpVersion({
+    feature,
+    part,
+  }: {
+    feature: IFeatureDocument;
+    part: string;
+  }): Promise<{ feature: string }>;
+
 }
 
 class FeatureClass extends mongoose.Model {
@@ -121,7 +130,6 @@ class FeatureClass extends mongoose.Model {
         message: `feature with name ${name} already exists`,
       };
     }
-
     const slug = await generateSlug(this, name);
     return this.create({
       domain,
@@ -167,6 +175,17 @@ class FeatureClass extends mongoose.Model {
                                             null,
                                             { sort: { createdAt: 1 }});
     return features;
+  }
+
+  public static async bumpVersion({ feature, part }) {
+    const newVersion = semver.inc(feature.feabSemver, part);
+    feature.feabSemver = newVersion;
+    await feature.save();
+
+    const childFeatures = await this.findChildren({ feature });
+    _.forEach(childFeatures, async childFeature => {
+      await this.bumpVersion({ feature: childFeature, part });
+    });
   }
 
 }
