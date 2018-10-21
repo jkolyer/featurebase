@@ -1,4 +1,0 @@
-{
-    "DBHost": "mongodb://localhost/dev",
-    "PORT_BACK": 3001
-}
