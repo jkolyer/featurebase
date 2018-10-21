@@ -12,7 +12,7 @@ The system is accessed through an administration portal, a JSON API, and in-memo
 Features are associated with a given application <i>Role</i> and functional <i>Domain</i>.  <i>Roles</i> describe the type of user acting on your system; <i>domains</i> group your features along functional lines.  They are discussed below.
 
 Feature lifecycle stages are defined as 
-<ol><li>conception</li>
+<ol><li>gestation</li>
   <li>development</li>
   <li>staging</li>
   <li>production</li>
@@ -29,7 +29,7 @@ This table describes how product team members will interact with the FeatureBase
       Member Role
   </td>
     <td>
-      Conception
+      Gestation
   </td>
     <td>
       Development
@@ -198,16 +198,20 @@ A prototypical example of a hiearchical feature is user authentication.  This is
 #### Roles
 These are the intended user roles for a given feature.  In the following example, a <i>premium user</i> inherits from the <i>user</i> role, and the <i>admin</i> inherits from the former.  
 <ul>
-  <li>User:  authenticated user with basic feature access
+  <li>Super User:  top-level user with all privileges (e.g., support, QA)
   <ul>
     <li>Premium User:  authenticated user will full feature access
     <ul>
-      <li>Admin:  super user privileges</li>
+      <li>Basic User:  authenticated user with basic feature access</li>
      </ul>
     </li>
    </ul>
    </li>
-  <li>Guest:  an unauthenticated user</li>
+  <li>Admin:  administrative user (e.g., QA, devops)
+   <ul>
+    <li>Guest:  an unauthenticated user</li>
+   </ul>
+ </li>
 </ul>
 
 #### Domains
