@@ -242,7 +242,7 @@ class FeatureClass extends mongoose.Model {
 
   public static async featureTransition({ feature, callback }) {
     const fsm = createFSM(feature);
-    await fsm.observe({
+    fsm.observe({
       onAfterTransition: async lifecycle => {
         if (lifecycle.from !== 'none') {
           feature.state = lifecycle.to;
@@ -254,7 +254,13 @@ class FeatureClass extends mongoose.Model {
         }
       },
     });
-    await fsm.performTransition(fsm);
+    // recursively iterate through each child first;
+    // only the top-level parent has a callback
+    const childFeatures = await this.findChildren({ feature });
+    for (const child of childFeatures) {
+      await Feature.featureTransition({ feature: child, callback: null });
+    }
+    fsm.performTransition(fsm);
   }
 
 }

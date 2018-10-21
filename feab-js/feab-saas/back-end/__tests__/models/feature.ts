@@ -202,21 +202,18 @@ describe('feature states', () => {
     const callback = async () => {
       authorize = await Feature.findOne({ _id: authorize.id });
       expect(authorize.state).toEqual(STATES.development);
+
+      // register
+      let children = await Feature.findChildren({ feature: authorize });
+      expect(children[0].state).toEqual(STATES.development);
+      
+      // confirmation
+      children = await Feature.findChildren({ feature: children[0] });
+      expect(children[0].state).toEqual(STATES.development);
+      
       done();
     }
     await Feature.featureTransition({ feature: authorize, callback });
-    
-    /*
-    // register
-    let children = await Feature.findChildren({ feature: authorize });
-    expect(children[0].state).toEqual(STATES.development);
-
-    // confirmation
-    children = await Feature.findChildren({ feature: children[0] });
-    expect(children[0].state).toEqual(STATES.development);
-
-    done();
-    */
   });
   
 });
