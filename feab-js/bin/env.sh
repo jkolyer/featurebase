@@ -26,7 +26,7 @@ function debug_back {
 
 function run_front {
     go_dir $FEAB_FRONT
-    PORT=3002 npm start -b 10.0.0.231
+    PORT=3002 npm start -b $FEAB_DEV_IP
 }
 
 function flow_front {
