@@ -19,7 +19,7 @@ const FeatureFSM = StateMachine.factory({
     { name: 'conceive', from: STATES.gestation, to: STATES.development },
     { name: 'trial', from: STATES.development, to: STATES.staging },
     { name: 'retract', from: STATES.staging, to: STATES.development },
-    { name: 'live', from: STATES.staging, to: STATES.production },
+    { name: 'goLive', from: STATES.staging, to: STATES.production },
     { name: 'retire', from: '*', to: STATES.deprecated },
     { name: 'goto',
       from: '*',
@@ -30,6 +30,42 @@ const FeatureFSM = StateMachine.factory({
     return {
       feature,
     };
+  },
+  methods: {
+    performTransition: async fsm => {
+      switch (fsm.state) {
+        case STATES.gestation: {
+          fsm.conceive();
+          break;
+        }
+        case STATES.development: {
+          fsm.trial();
+          break;
+        }
+        case STATES.staging: {
+          fsm.goLive();
+          break;
+        }
+        case STATES.production: {
+          fsm.retire();
+          break;
+        }
+        case STATES.deprecated: {
+          throw {
+            name: 'FeatureTransitionFail',
+            message: 'cannot transition feature out of deprecated state',
+          };
+          break;
+        }
+        default: {
+          throw {
+            name: 'FeatureTransitionFail',
+            message: 'unknown feature state',
+          };
+          break;
+        }
+      }
+    },
   },
 });
 

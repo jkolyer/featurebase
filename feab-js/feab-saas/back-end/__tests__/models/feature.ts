@@ -2,6 +2,7 @@ import { Domain } from '../../server/models/Domain';
 import { DomainRole } from '../../server/models/DomainRole';
 import { Feature } from '../../server/models/Feature';
 import { createFSM, DEFAULT_STATE, STATES } from '../../server/utils/FeatureFSM';
+// import { logger } from '../../server/utils/logs';
 import * as mongoose from 'mongoose';
 import { authorizationFeature } from '../utils/featureBuilders'
 
@@ -189,6 +190,33 @@ describe('feature states', () => {
     expect(children[0].state).toEqual(DEFAULT_STATE);
 
     done();
+  });
+  
+  test('state transition updates children', async (done) => {
+    let authorize = await authorizationFeature();
+    const register = await Feature.addChildFeature({ name: 'Register',
+                                                     parentFeature: authorize });
+    await Feature.addChildFeature({ name: 'Confirmation',
+                                    parentFeature: register });
+
+    const callback = async () => {
+      authorize = await Feature.findOne({ _id: authorize.id });
+      expect(authorize.state).toEqual(STATES.development);
+      done();
+    }
+    await Feature.featureTransition({ feature: authorize, callback });
+    
+    /*
+    // register
+    let children = await Feature.findChildren({ feature: authorize });
+    expect(children[0].state).toEqual(STATES.development);
+
+    // confirmation
+    children = await Feature.findChildren({ feature: children[0] });
+    expect(children[0].state).toEqual(STATES.development);
+
+    done();
+    */
   });
   
 });

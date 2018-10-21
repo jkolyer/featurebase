@@ -4,7 +4,7 @@ import { IDomainDocument } from './Domain';
 import { IDomainRoleDocument } from './DomainRole';
 // import { logger } from '../utils/logs';
 
-import { DEFAULT_STATE } from '../utils/FeatureFSM';
+import { createFSM, DEFAULT_STATE } from '../utils/FeatureFSM';
 import { generateSlug } from '../utils/slugify';
 
 const mongoSchema = new mongoose.Schema({
@@ -124,6 +124,14 @@ interface IFeatureModel extends mongoose.Model<IFeatureDocument> {
     parentFeature: IFeatureDocument;
   }): Promise<IFeatureDocument>;
 
+  featureTransition({
+    feature,
+    callback,
+  }: {
+    feature: IFeatureDocument;
+    callback: () => void;
+  }): void;
+
 }
 
 class FeatureClass extends mongoose.Model {
@@ -230,6 +238,23 @@ class FeatureClass extends mongoose.Model {
     feature.state = parentFeature.state;
     await feature.save();
     return feature;
+  }
+
+  public static async featureTransition({ feature, callback }) {
+    const fsm = createFSM(feature);
+    await fsm.observe({
+      onAfterTransition: async lifecycle => {
+        if (lifecycle.from !== 'none') {
+          feature.state = lifecycle.to;
+          await feature.save(() => {
+            if (callback) {
+              callback();
+            }
+          });
+        }
+      },
+    });
+    await fsm.performTransition(fsm);
   }
 
 }
