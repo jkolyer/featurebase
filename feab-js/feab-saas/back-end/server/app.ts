@@ -126,3 +126,5 @@ server.listen(port, err => {
   }
   logger.info(`> Ready on ${ROOT_URL}`);
 });
+
+export { server };

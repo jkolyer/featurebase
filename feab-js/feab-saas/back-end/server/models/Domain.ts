@@ -2,6 +2,7 @@ import * as mongoose from 'mongoose';
 
 import { generateSlug } from '../utils/slugify';
 import Team from './Team';
+import User from './User';
 
 const mongoSchema = new mongoose.Schema({
   userId: {
@@ -93,13 +94,34 @@ class DomainClass extends mongoose.Model {
   }
 
   public static async getList({ userId, teamId }) {
-    await this.checkPermission({ userId, teamId });
+    // await this.checkPermission({ userId, teamId });
+
+    const user = await User.findOne({ _id: userId });
+    if (!user) {
+        throw {
+          name: '',
+          message: '',
+        };
+    }
+    if (!teamId) {
+
+      const teams = await Team.find({ teamLeaderId: userId },
+                                    null,
+                                    { sort: { name: 1 }}).lean();
+      if (teams.length > 0) {
+        teamId = teams[0].id;
+      } else {
+        throw {
+          name: '',
+          message: '',
+        };
+      }
+    }
 
     const filter: any = { teamId };
-
     const domains: any[] = await this.find(filter,
                                            null,
-                                           { sort: { createdAt: 1 }}).lean();
+                                           { sort: { name: 1 }}).lean();
 
     return { domains };
   }
