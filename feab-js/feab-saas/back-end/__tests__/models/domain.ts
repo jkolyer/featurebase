@@ -45,9 +45,9 @@ describe('creating domains', () => {
     const dlist = await Domain.getList({ userId: user.id, teamId: team.id });
     const domains = dlist.domains
     expect(domains.length).toEqual(3);
-    expect(domains[0].name).toEqual(dname1);
-    expect(domains[1].name).toEqual(dname2);
-    expect(domains[2].name).toEqual(dname3);
+    expect(domains[0].name).toEqual('Adhoc');
+    expect(domains[1].name).toEqual('Site');
+    expect(domains[2].name).toEqual('Vertical');
 
     done();
   });
