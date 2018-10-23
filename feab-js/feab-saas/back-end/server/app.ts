@@ -37,18 +37,18 @@ mongoose.connect(
   options,
 );
 
-const server = express();
+const app = express();
 
 const appPort = process.env.APP_PORT || 3000;
 const origin = dev ? `http://${devhost}:${appPort}` : PRODUCTION_URL_APP;
-server.use(cors({ origin, credentials: true }));
+app.use(cors({ origin, credentials: true }));
 
-server.use(helmet());
-server.use(compression());
+app.use(helmet());
+app.use(compression());
 
-stripeWebHooks({ server });
+stripeWebHooks({ server: app });
 
-server.use(express.json());
+app.use(express.json());
 
 const MongoStore = mongoSessionStore(session);
 const sessionOptions = {
@@ -68,17 +68,17 @@ const sessionOptions = {
 };
 
 if (!dev) {
-  server.set('trust proxy', 1); // sets req.hostname, req.ip
+  app.set('trust proxy', 1); // sets req.hostname, req.ip
   sessionOptions.cookie.secure = true; // sets cookie over HTTPS only
 }
 
 const sessionMiddleware = session(sessionOptions);
-server.use(sessionMiddleware);
+app.use(sessionMiddleware);
 
-auth({ server, ROOT_URL });
-api(server);
+auth({ server: app, ROOT_URL });
+api(app);
 
-server.get('/uploaded-file', async (req, res) => {
+app.get('/uploaded-file', async (req, res) => {
   if (!req.user) {
     res.redirect(dev ? 'http://localhost:3000/login' : `${PRODUCTION_URL_APP}/login`);
     return;
@@ -112,19 +112,37 @@ server.get('/uploaded-file', async (req, res) => {
   res.redirect(data.signedRequest);
 });
 
-server.get('/robots.txt', (_, res) => {
+app.get('/robots.txt', (_, res) => {
   res.sendFile(path.join(__dirname, '../static', 'robots.txt'));
 });
 
-server.get('*', (_, res) => {
+app.get('*', (_, res) => {
   res.sendStatus(403);
 });
 
-server.listen(port, err => {
-  if (err) {
-    throw err;
-  }
-  logger.info(`> Ready on ${ROOT_URL}`);
-});
+if (dev) {
+  // development error handler will print stacktrace
+  app.use((err, req, res, next) => {
+    if (req && next) {
+      logger.error(`*** error:  ${err.message}`);
+    }
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: err,
+    });
+  });
+} else {
+  app.use((err, req, res, next) => {
+    if (req && next) {
+      logger.error(`*** error:  ${err.message}`);
+    }
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: {},
+    });
+  });
+}
 
-export { server };
+export { app, ROOT_URL };

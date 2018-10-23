@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon server/app.ts",
+    "dev": "nodemon server.ts",
     "build": "tsc --project tsconfig.json",
     "start": "NODE_ENV=production node production-server/app.js",
     "now": "now && now alias",
@@ -67,9 +67,13 @@
     "@types/jest": "^23.3.5",
     "@types/passport": "^0.4.6",
     "@types/stripe": "^6.0.1",
+    "babel-cli": "^6.26.0",
     "husky": "^1.1.2",
     "jest": "^23.6.0",
     "nodemon": "^1.18.4",
+    "sinon": "^7.0.0",
+    "superagent": "^4.0.0-beta.5",
+    "supertest": "^3.3.0",
     "ts-jest": "^23.10.4",
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0"
