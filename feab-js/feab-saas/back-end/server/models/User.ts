@@ -99,6 +99,7 @@ const mongoSchema = new mongoose.Schema({
 });
 
 export interface IUserDocument extends mongoose.Document {
+  id: string;
   googleId: string;
   googleToken: { accessToken: string; refreshToken: string };
   slug: string;

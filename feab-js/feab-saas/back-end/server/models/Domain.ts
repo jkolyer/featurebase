@@ -140,7 +140,7 @@ class DomainClass extends mongoose.Model {
     if (existing) {
       throw {
         name: 'DuplicateDomainName',
-        message: `domain with name ${name} already exists`,
+        message: `domain with name '${name}' already exists`,
       };
     }
 
