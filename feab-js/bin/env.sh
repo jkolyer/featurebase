@@ -4,7 +4,7 @@ export FEAB_ENV=$BIN_DIR/..
 export FEAB_BACK=$FEAB_ENV/feab-saas/back-end
 export FEAB_FRONT=$FEAB_ENV/feab-saas/front-end
 
-function go_dir {
+function visit_dir {
     echo $1
     cd $1
 }
@@ -12,36 +12,27 @@ function go_dir {
 export FEAB_DEV_IP=10.0.0.231
 
 function serve_back {
-    go_dir $FEAB_BACK
-    NODE_ENV=dev PORT=3001 DEBUG=feab-back:* "$@" -b $FEAB_DEV_IP
+    visit_dir $FEAB_BACK
+    NODE_IP=cohere.us yarn dev "$@"
+    # NODE_ENV=dev PORT=3001 DEBUG=feab-back:* "$@" -b $FEAB_DEV_IP
 }
 
 function run_back {
-    serve_back npm start
+    serve_back
 }
 
 function debug_back {
-    serve_back node inspect server.js
+    serve_back debug
 }
 
 function run_front {
-    go_dir $FEAB_FRONT
-    PORT=3002 npm start -b $FEAB_DEV_IP
-}
-
-function flow_front {
-    go_dir $FEAB_FRONT
-    yarn flow
-}
-
-function flow_back {
-    go_dir $FEAB_BACK
-    yarn flow
+    visit_dir $FEAB_FRONT
+    NODE_IP=cohere.us yarn dev
 }
 
 function run_mocha {
-    go_dir $FEAB_BACK
-    NODE_ENV=test ./node_modules/mocha/bin/mocha test/$1
+    visit_dir $FEAB_BACK
+    NODE_ENV=test ./node_modules/mocha/bin/mocha $1
     # NODE_ENV=test npm test $2 test/$1
     # ./node_modules/mocha/bin/mocha test/$1
 }
@@ -52,15 +43,6 @@ function mocha_test {
 
 function mocha_test_debug {
     run_mocha $1 debug
-}
-
-function sequelize_migrate {
-    go_dir $FEAB_BACK
-    node_modules/.bin/sequelize db:migrate
-}
-
-function sequelize_migrate {
-    node_modules/.bin/sequelize db:migrate
 }
 
 function start_mongo {
@@ -77,11 +59,11 @@ function dolint {
 }
 
 function jest_back {
-    go_dir $FEAB_BACK
+    visit_dir $FEAB_BACK
     yarn test $1
 }
 
 function jest_back_debug {
-    go_dir $FEAB_BACK
+    visit_dir $FEAB_BACK
     node inspect ./node_modules/jest-cli/bin/jest.js "$@"
 }

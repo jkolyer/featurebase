@@ -25,22 +25,16 @@ describe('Domains', () => {
     await Domain.remove({});
     await DomainRole.remove({});
     
-    // this.authenticate = sinon.stub(passport,"authenticate").returns(() => {});
-
     this.authenticate = sinon.stub(passport,"authenticate")
       .callsFake((strategy, options) => {
-        // debugger
         logger.debug(`*** callsFake:  ${strategy}; ${options}`);
-        // if (callback) {
-        //   callback(null, { "username": "test@techbrij.com"}, null);
-        // }
+        
         return (req, res, next) => {
           if (req && res && next) {
             req.user = this.user;
             logger.debug('*** authenticate: ');
             res.redirect(`/`);
           }
-          // next();
         };
       });
   });
@@ -61,10 +55,6 @@ describe('Domains', () => {
     this.user = await owner()
     this.userId = this.user.id;
 
-    // this.authenticate.yields(0, { id: this.userId });
-    // this.authenticate.yields({ id: this.userId });
-    // this.authenticate.yields(null, { id: this.userId });
-    
     done();
   });
 
@@ -72,14 +62,12 @@ describe('Domains', () => {
     return function(done) {
       serverAgent
         .get('/auth/google')
-        .send({ username: 'admin', password: 'admin' })
         .expect(302)
         .expect('Location', '/')
         .end(onResponse);
 
       function onResponse(err, res) {
         if (err) return done(err);
-        logger.debug(`*** onResponse:  ${res}`);
         return done();
       }
     };
@@ -91,8 +79,6 @@ describe('Domains', () => {
     test('login', loginUser());
     /*
     test('it should GET all the domains', async done => {
-      await buildDomain('Site');
-      await buildDomain('Adhoc');
 
       const response = await request(serverAgent)
         .get('/api/v1/team-leader/teams/get-members');
