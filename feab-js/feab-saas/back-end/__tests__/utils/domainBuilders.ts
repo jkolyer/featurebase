@@ -81,10 +81,23 @@ let buildDomainAndRole = function() {
   }
 }();
 
+let loginCookie = function() {
+  return (serverAgent, done) => {
+    serverAgent
+      .get('/auth/google')
+      .expect(302)
+      .expect('Location', '/')
+      .end((_, res) => {
+        done(res.headers['set-cookie']);
+      });
+  }
+}();
+
 export {
   buildDomain,
   buildDomainRole,
   buildDomainAndRole,
+  loginCookie,
   owner,
   ownerTeam,
 }
