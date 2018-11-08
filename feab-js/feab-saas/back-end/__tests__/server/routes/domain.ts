@@ -8,6 +8,7 @@ import { DomainRole } from '../../../server/models/DomainRole';
 import { buildDomain, loginCookie, owner } from '../../utils/domainBuilders'
 import * as mongoose from 'mongoose';
 import * as request from 'supertest';
+import * as cookie from 'cookie';
 
 const serverAgent = request.agent(app);
 
@@ -24,25 +25,31 @@ describe('Domains', () => {
     
     await Domain.remove({});
     await DomainRole.remove({});
-    
+
+    await buildDomain('Site');
+    await buildDomain('Adhoc');
+
+    this.user = await owner()
+    this.userId = this.user.id;
+
+    const localUser = this.user
     this.authenticate = sinon.stub(passport,"authenticate")
       .callsFake((strategy, options) => {
         logger.debug(`*** callsFake:  ${strategy}; ${options}`);
-        
+
         return (req, res, next) => {
           if (req && res && next) {
-            req.user = this.user;
-            logger.debug('*** authenticate: ');
+            req.user = localUser;
+            req._passport.session = {};
+            req._passport.session.user = localUser;
+            if (!req.session) {
+              req.session = {};
+            }
             res.redirect(`/`);
           }
         };
       });
 
-    let _this = this
-    await loginCookie(serverAgent, (cookie) => {
-      _this.authCookie = cookie;
-    });
-    logger.debug(`*** loginCookie: assigned  ${this.authCookie}`);
   });
   
   afterAll(async () => {
@@ -50,55 +57,44 @@ describe('Domains', () => {
   });
   
   afterEach(async () => {
-    await Domain.remove({});
-    await DomainRole.remove({});
+    // await Domain.remove({});
+    // await DomainRole.remove({});
   });
   
   beforeEach(async done => {
-    await buildDomain('Site');
-    await buildDomain('Adhoc');
+    // await buildDomain('Site');
+    // await buildDomain('Adhoc');
+    // this.user = await owner()
+    // this.userId = this.user.id;
 
-    this.user = await owner()
-    this.userId = this.user.id;
-
-    done();
+    let _this = this
+    await loginCookie(serverAgent, (setCookie) => {
+      _this.authCookie = cookie.parse(setCookie[0])['saas-api.sid'];
+      logger.debug(`*** loginCookie:  ${_this.authCookie}`);
+      done();
+    });
+    
   });
 
-  function loginUser() {
-    return function(done) {
-      serverAgent
-        .get('/auth/google')
-        .expect(302)
-        .expect('Location', '/')
-        .end(onResponse);
-
-      function onResponse(err, res) {
-        if (err) return done(err);
-        this.cookies = res.headers['set-cookie'];
-        
-        logger.debug(`*** loginUser: res = ${res}`);
-        return done();
-      }
-    };
-  };
-  
   /*
    * Test the /GET route
    */
   describe('/GET domain', () => {
-    test('login', loginUser());
 
     test('it should GET all the domains', async done => {
       logger.debug(`*** get all domains:  cookie = ${this.authCookie}`);
+      debugger
       
       serverAgent
         .get('/api/v1/team-leader')
+        .set({ 'Cookie': `saas-api.sid=${this.authCookie}` })
         .expect(200)
         .end(onResponse);
 
       function onResponse(err, res) {
         if (err) return done(err);
-        logger.debug(`*** loginUser: res = ${res}`)
+        logger.debug(`*** domain request: res = ${JSON.stringify(res,null,2)}`)
+        //expect(res.status).to.equal(200);
         return done();
       }
       /*

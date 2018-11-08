@@ -11,7 +11,7 @@ const port = process.env.PORT || 3000;
 const devhost = process.env.NODE_IP || 'localhost';
 const URL_APP = dev ? `http://${devhost}:${port}` : PRODUCTION_URL_APP;
 
-export default function auth({ ROOT_URL, server }) {
+export default function authGoog({ ROOT_URL, server }) {
   const clientID = process.env.Google_clientID;
   const clientSecret = process.env.Google_clientSecret;
 

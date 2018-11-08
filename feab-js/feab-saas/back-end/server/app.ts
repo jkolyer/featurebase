@@ -10,7 +10,7 @@ import * as path from 'path';
 
 import api from './api';
 import { signRequestForLoad } from './aws-s3';
-import auth from './google';
+import authGoog from './google';
 import { stripeWebHooks } from './stripe';
 
 import logger from './logs';
@@ -75,7 +75,7 @@ if (!dev) {
 const sessionMiddleware = session(sessionOptions);
 app.use(sessionMiddleware);
 
-auth({ server: app, ROOT_URL });
+authGoog({ server: app, ROOT_URL });
 api(app);
 
 app.get('/uploaded-file', async (req, res) => {

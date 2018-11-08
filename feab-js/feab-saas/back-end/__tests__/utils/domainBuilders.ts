@@ -4,7 +4,7 @@ import Team from '../../server/models/Team';
 import User from '../../server/models/User';
 import { generateNumberSlug, generateSlug } from '../../server/utils/slugify';
 
-let owner = function() {
+const owner = function() {
   return async (email: string = null) => {
     if (!email) email = 'foo+bar@example.com';
 
@@ -28,7 +28,7 @@ let owner = function() {
   }
 }();
 
-let ownerTeam = function() {
+const ownerTeam = function() {
   return async (domainOwner) => {
     let tm = await Team.findOne({ teamLeaderId: domainOwner.id });
     if (tm) {
@@ -52,7 +52,7 @@ let ownerTeam = function() {
   }
 }();
 
-let buildDomain = function() {
+const buildDomain = function() {
   return async (dname: string, email: string = null) => {
     const domainOwner = await owner(email);
     const domainTeam = await ownerTeam(domainOwner);
@@ -64,7 +64,7 @@ let buildDomain = function() {
   }
 }();
   
-let buildDomainRole = function() {
+const buildDomainRole = function() {
   return async (name, domain, parent) => {
     const role = await DomainRole.add({ domain: domain,
                                         name: name,
@@ -73,7 +73,7 @@ let buildDomainRole = function() {
   }
 }();
 
-let buildDomainAndRole = function() {
+const buildDomainAndRole = function() {
   return async (domainName: string, domainRoleName: string) => {
     const domain = await buildDomain(domainName);
     const domainRole = await buildDomainRole(domainRoleName, domain, null);
@@ -81,7 +81,7 @@ let buildDomainAndRole = function() {
   }
 }();
 
-let loginCookie = function() {
+const loginCookie = function() {
   return (serverAgent, done) => {
     serverAgent
       .get('/auth/google')
