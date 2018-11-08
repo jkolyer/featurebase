@@ -2,8 +2,11 @@ import * as express from 'express';
 
 // import logger from '../logs';
 import { Domain } from '../models/Domain';
+import ensureAuthenticated from './ensureAuthenticated';
 
 const router = express.Router();
+
+router.use(ensureAuthenticated);
 
 router.get('/domains/', async (req, res, next) => {
   try {

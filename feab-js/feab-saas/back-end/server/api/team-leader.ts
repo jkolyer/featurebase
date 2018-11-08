@@ -5,20 +5,13 @@ import Invitation from '../models/Invitation';
 import Team from '../models/Team';
 import User from '../models/User';
 
+import ensureAuthenticated from './ensureAuthenticated';
+
 const router = express.Router();
 
 // TODO: check for Team Leader properly
 
-router.use((req, res, next) => {
-  logger.debug('team leader API', req.path);
-
-  if (!req.user) {
-    res.status(401).json({ error: 'Unauthorized' });
-    return;
-  }
-
-  next();
-});
+router.use(ensureAuthenticated);
 
 router.post('/teams/add', async (req, res, next) => {
   try {

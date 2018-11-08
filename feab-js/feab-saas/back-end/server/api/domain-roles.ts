@@ -4,7 +4,11 @@ import * as express from 'express';
 // import { Domain } from '../models/Domain';
 // import { DomainRole } from '../models/DomainRole';
 
+import ensureAuthenticated from './ensureAuthenticated';
+
 const router = express.Router();
+
+router.use(ensureAuthenticated);
 
 // TODO: check for DomainRole Leader properly
 

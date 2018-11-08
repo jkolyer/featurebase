@@ -8,17 +8,9 @@ import Post from '../models/Post';
 import Team from '../models/Team';
 import User from '../models/User';
 
+import ensureAuthenticated from './ensureAuthenticated';
+
 const router = express.Router();
-
-router.use((req, res, next) => {
-  logger.debug('team member API', req.path);
-  if (!req.user) {
-    res.status(401).json({ error: 'Unauthorized' });
-    return;
-  }
-
-  next();
-});
 
 async function loadDiscussionsData(team, userId, body) {
   const { discussionSlug } = body;
@@ -70,6 +62,8 @@ async function loadTeamData(team, userId, body) {
 
   return data;
 }
+
+router.use(ensureAuthenticated);
 
 router.post('/get-initial-data', async (req, res, next) => {
   try {
