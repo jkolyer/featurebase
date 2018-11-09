@@ -20,7 +20,7 @@
   },
   "include": ["./server/**/*.ts"],
   "exclude": [
-    "**/__mocks__/*",
-    "**/__tests__/*",
+    "./server/**/__mocks__/*",
+    "./server/**/__tests__/*",
   ]
 }
