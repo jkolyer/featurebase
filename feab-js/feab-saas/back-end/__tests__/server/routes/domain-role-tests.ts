@@ -12,15 +12,26 @@ import * as supertest from 'supertest';
 
 jest.mock('../../../server/api/ensureAuthenticated');
 
-describe('Domains', () => {
-  let siteDomain;
+describe('Domain Roles', () => {
+  const docRefs: any = {};
   
   beforeAll(async () => {
     setupMongoose(true);
     
+    const superRole = await buildDomainAndRole('Adhoc', 'Super User');
+    const adhocDomain = superRole.domain;
+    const premiumRole = await buildDomainRole('Premium User', adhocDomain, superRole);
+    const basicRole = await buildDomainRole('Basic User', adhocDomain, premiumRole);
+
+    docRefs.adhocDomain = adhocDomain;
+    docRefs.superRole = superRole;
+    docRefs.premiumRole = premiumRole;
+    docRefs.basicRole = basicRole;
+    
     const guestRole = await buildDomainAndRole('Site', 'Guest');
-    siteDomain = guestRole.domain
-    await buildDomainRole('User', siteDomain, null);
+    docRefs.siteDomain = guestRole.domain
+    
+    await buildDomainRole('User', docRefs.siteDomain, null);
     // logger.debug(`*** beforeAll:  ${userRole}`)
     
     this.serverAgent = supertest.agent(app);
@@ -30,10 +41,19 @@ describe('Domains', () => {
     setupMongoose(false);
   });
   
+  describe('domain-role parent-child', () => {
+    test('it should have parent-child relationships', async done => {
+      expect(docRefs.superRole.parent).toBe(null);
+      expect(docRefs.premiumRole.parent).toBe(docRefs.superRole);
+      expect(docRefs.basicRole.parent).toBe(docRefs.premiumRole);
+      done();
+    });
+  });
+  
   describe('/GET domain-role', () => {
     test('it should GET all the domain roles', async done => {
       this.serverAgent
-        .get(`/api/v1/domains/${siteDomain.id}/roles`)
+        .get(`/api/v1/domains/${docRefs.siteDomain.id}/roles`)
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
