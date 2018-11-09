@@ -1,6 +1,7 @@
 import * as express from 'express';
 
 import logger from '../logs';
+import domainRolesApi from './domain-roles';
 import domainsApi from './domains';
 import publicApi from './public';
 import teamLeaderApi from './team-leader';
@@ -17,4 +18,5 @@ export default function api(server: express.Express) {
   server.use('/api/v1/team-leader', teamLeaderApi, handleError);
   server.use('/api/v1/team-member', teamMemberApi, handleError);
   server.use('/api/v1/domains', domainsApi, handleError);
+  server.use('/api/v1/domains', domainRolesApi, handleError);
 }

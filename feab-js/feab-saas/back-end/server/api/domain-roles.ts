@@ -1,55 +1,95 @@
 import * as express from 'express';
 
 // import logger from '../logs';
-// import { Domain } from '../models/Domain';
-// import { DomainRole } from '../models/DomainRole';
-
+import { Domain } from '../models/Domain';
 import { ensureAuthenticated } from './ensureAuthenticated';
 
 const router = express.Router();
 
 router.use(ensureAuthenticated);
 
-// TODO: check for DomainRole Leader properly
-
-/*
-router.use((req, res, next) => {
-  logger.debug('domainRole leader API', req.path);
-
-  if (!req.domain) {
-    res.status(401).json({ error: 'Unauthorized' });
-    return;
-  }
-
-  next();
-});
-
-router.post('/domainRoles/add', async (req, res, next) => {
+router.get('/:domainId/roles', async (req, res, next) => {
   try {
-    const { name, avatarUrl } = req.body;
+    const teamId = req.query.team_id;
+    const domainId = req.params.domainId;
+    const domain = await Domain.getDomain({ userId: req.user.id, teamId, domainId });
+    res.json(domain);
 
-    logger.debug(`Express route: ${name}, ${avatarUrl}`);
-
-    const domainRole = await DomainRole.add({ domainId: req.domain.id, name, avatarUrl });
-
-    res.json(domainRole);
   } catch (err) {
     next(err);
   }
 });
 
-router.post('/domainRoles/update', async (req, res, next) => {
+/*
+router.get('/:slug', async (req, res, next) => {
   try {
-    const { domainRoleId, name, avatarUrl } = req.body;
+    const teamId = req.query.team_id;
+    const slug = req.params.slug;
 
-    const domainRole = await DomainRole.updateDomainRole({
-      domainId: req.domain.id,
-      domainRoleId,
-      name,
-      avatarUrl,
-    });
+    const domains = await Domain.getList({ userId: req.user.id, teamId, slug });
+    res.json(domains);
 
-    res.json(domainRole);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/', async (req, res, next) => {
+  try {
+    const { name } = req.body;
+
+    const teamId = req.query.team_id;
+    const domain = await Domain.add({ userId: req.user.id, name, teamId });
+    res.json(domain);
+
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.put('/:domainId', async (req, res, next) => {
+  try {
+    const { name } = req.body;
+
+    const domainId = req.params.domainId;
+    const domain = await Domain.edit({ userId: req.user.id, name, domainId });
+    res.json(domain);
+
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.delete('/:domainId', async (req, res, next) => {
+  try {
+    const domainId = req.params.domainId;
+    const domain = await Domain.delete({ userId: req.user.id, domainId });
+    res.json(domain);
+
+  } catch (err) {
+    next(err);
+  }
+});
+*/
+/*
+
+router.get('/domains/get-roles', async (req, res, next) => {
+  try {
+    const users = await User.getDomainMembers({ userId: req.user.id, domainId: req.query.domainId });
+
+    res.json({ users });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/domains/remove-role', async (req, res, next) => {
+  try {
+    const { domainId, userId } = req.body;
+
+    await Domain.removeMember({ domainLeaderId: req.user.id, domainId, userId });
+
+    res.json({ done: 1 });
   } catch (err) {
     next(err);
   }

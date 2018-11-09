@@ -40,6 +40,16 @@ interface IDomainDocument extends mongoose.Document {
 }
 
 interface IDomainModel extends mongoose.Model<IDomainDocument> {
+  getDomain({
+    userId,
+    teamId,
+    domainId,
+  }: {
+    userId: string;
+    teamId: string;
+    domainId: string;
+  }): Promise<IDomainDocument>;
+
   getList({
     userId,
     teamId,
@@ -105,9 +115,9 @@ class DomainClass extends mongoose.Model {
   public static async deriveTeamId(userId) {
       const teams = await Team.find({ teamLeaderId: userId },
                                     null,
-                                    { sort: { name: 1 }}).lean();
+                                    { sort: { name: 1 }});
       if (teams.length > 0) {
-        return teams[0]._id;
+        return teams[0].id;
       } else {
         throw {
           name: 'DomainLookup',
@@ -116,12 +126,31 @@ class DomainClass extends mongoose.Model {
       }
   }
 
+  public static async getDomain({ userId, teamId, domainId }) {
+    const user = await User.findOne({ _id: userId });
+    if (!user) {
+        throw {
+          name: 'DomainUserError',
+          message: `could not find user with identifier '${userId}'`,
+        };
+    }
+    if (!teamId) {
+      teamId = await this.deriveTeamId(userId);
+    }
+    if (teamId) {
+      const filter: any = { userId, teamId, _id: domainId };
+      const domain: any = await this.findOne(filter).lean();
+      return domain;
+    }
+    return null;
+  }
+
   public static async getList({ userId, teamId, slug }) {
     const user = await User.findOne({ _id: userId });
     if (!user) {
         throw {
-          name: '',
-          message: '',
+          name: 'DomainUserError',
+          message: `could not find user with identifier '${userId}'`,
         };
     }
     if (!teamId) {
