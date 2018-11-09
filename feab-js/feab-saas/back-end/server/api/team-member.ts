@@ -8,7 +8,7 @@ import Post from '../models/Post';
 import Team from '../models/Team';
 import User from '../models/User';
 
-import ensureAuthenticated from './ensureAuthenticated';
+import { ensureAuthenticated } from './ensureAuthenticated';
 
 const router = express.Router();
 

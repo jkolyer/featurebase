@@ -1,6 +1,6 @@
 import logger from '../logs';
 
-const ensureAuthenticated = (req, res, next) => {
+export function ensureAuthenticated(req, res, next) {
   logger.debug(`ensureAuthenticated: ${req.path}`);
 
   if (!req.user) {
@@ -8,6 +8,4 @@ const ensureAuthenticated = (req, res, next) => {
     return;
   }
   next();
-};
-
-export default ensureAuthenticated;
+}

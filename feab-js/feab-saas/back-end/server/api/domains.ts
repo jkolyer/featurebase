@@ -2,13 +2,13 @@ import * as express from 'express';
 
 // import logger from '../logs';
 import { Domain } from '../models/Domain';
-import ensureAuthenticated from './ensureAuthenticated';
+import { ensureAuthenticated } from './ensureAuthenticated';
 
 const router = express.Router();
 
 router.use(ensureAuthenticated);
 
-router.get('/domains/', async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
     const teamId = null; // req.team ? req.team.id : null;
     const domains = await Domain.getList({ userId: req.user.id, teamId });
