@@ -9,20 +9,25 @@ import { Domain } from '../../../server/models/Domain';
 import { DomainRole } from '../../../server/models/DomainRole';
 import Team from '../../../server/models/Team';
 import User from '../../../server/models/User';
-import { buildDomain, loginCookie } from '../../utils/domainBuilders'
+import { buildDomain } from '../../utils/domainBuilders'
 import * as mongoose from 'mongoose';
 import * as supertest from 'supertest';
-import * as cookie from 'cookie';
 
-import { logger } from '../../../server/utils/logs';
+// import { logger } from '../../../server/utils/logs';
 
 jest.mock('../../../server/api/ensureAuthenticated');
 
 // Our parent block
 describe('Domains', () => {
+  let mongoose_db
   
   beforeAll(async () => {
-    await mongoose.connect(process.env.MONGO_URL_TEST);
+    const mongo_options = {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useFindAndModify: true,
+    };
+    mongoose_db = await mongoose.connect(process.env.MONGO_URL_TEST, mongo_options);
     
     await User.remove({});
     await Team.remove({});
@@ -40,19 +45,24 @@ describe('Domains', () => {
     await Team.remove({});
     await Domain.remove({});
     await DomainRole.remove({});
+    await mongoose_db.close()
   });
   
   afterEach(async () => {
   });
   
+    /*
+    // import { loginCookie } from '../../utils/domainBuilders'
+    // import * as cookie from 'cookie';
   beforeEach(async done => {
     let _this = this
     await loginCookie(this.serverAgent, (setCookie) => {
       _this.authCookie = cookie.parse(setCookie[0])['saas-api.sid'];
-      logger.debug(`*** loginCookie:  ${_this.authCookie}`);
+      // logger.debug(`*** loginCookie:  ${_this.authCookie}`);
       done();
     });
   });
+    */
 
   /*
    * Test the /GET route
@@ -60,8 +70,6 @@ describe('Domains', () => {
   describe('/GET domain', () => {
 
     test('it should GET all the domains', async done => {
-      logger.debug(`*** get all domains:  cookie = ${this.authCookie}`);
-
       this.serverAgent
         .get('/api/v1/domains')
         .set({ 'Cookie': `saas-api.sid=${this.authCookie}` })
@@ -73,7 +81,6 @@ describe('Domains', () => {
           expect(200);
           
           const resJson = res.body;
-          // logger.debug(`*** domain request: res = ${resJson}`)
           expect(resJson.domains.length).toBe(2);
 
           const d1 = resJson.domains[0]
@@ -90,7 +97,7 @@ describe('Domains', () => {
 
     test('it should GET domain by slug', async done => {
       this.serverAgent
-        .get(`/api/v1/domains?id=adhoc`)
+        .get(`/api/v1/domains/adhoc`)
         .set({ 'Cookie': `saas-api.sid=${this.authCookie}` })
         .expect(200)
         .expect('Content-Type', /json/)
@@ -100,7 +107,6 @@ describe('Domains', () => {
           expect(200);
           
           const resJson = res.body;
-          // logger.debug(`*** domain request: res = ${resJson}`)
           expect(resJson.domains.length).toBe(1);
 
           const d1 = resJson.domains[0]

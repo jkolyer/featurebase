@@ -11,11 +11,22 @@ router.use(ensureAuthenticated);
 router.get('/', async (req, res, next) => {
   try {
     const teamId = req.query.team_id;
-    const slug = req.query.id;
+    const domains = await Domain.getList({ userId: req.user.id, teamId, slug: null });
+    res.json(domains);
+
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/:slug', async (req, res, next) => {
+  try {
+    const teamId = req.query.team_id;
+    const slug = req.params.slug;
 
     const domains = await Domain.getList({ userId: req.user.id, teamId, slug });
-
     res.json(domains);
+
   } catch (err) {
     next(err);
   }
