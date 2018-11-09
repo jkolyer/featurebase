@@ -1,40 +1,21 @@
-// During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
 
 import 'jest';
 
-// Require the dev-dependencies
 import { app } from '../../../server/app';
-import { Domain } from '../../../server/models/Domain';
-import { DomainRole } from '../../../server/models/DomainRole';
-import Team from '../../../server/models/Team';
-import User from '../../../server/models/User';
-import { buildDomain } from '../../utils/domainBuilders'
-import * as mongoose from 'mongoose';
+import { buildDomain, setupMongoose } from '../../utils/domainBuilders'
 import * as supertest from 'supertest';
 
 // import { logger } from '../../../server/utils/logs';
 
 jest.mock('../../../server/api/ensureAuthenticated');
 
-// Our parent block
 describe('Domains', () => {
-  let mongoose_db;
   let siteDomain;
   
   beforeAll(async () => {
-    const mongo_options = {
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useFindAndModify: true,
-    };
-    mongoose_db = await mongoose.connect(process.env.MONGO_URL_TEST, mongo_options);
+    setupMongoose(true);
     
-    await User.remove({});
-    await Team.remove({});
-    await Domain.remove({});
-    await DomainRole.remove({});
-
     siteDomain = await buildDomain('Site');
     await buildDomain('Adhoc');
 
@@ -42,17 +23,12 @@ describe('Domains', () => {
   });
   
   afterAll(async () => {
-    await User.remove({});
-    await Team.remove({});
-    await Domain.remove({});
-    await DomainRole.remove({});
-    await mongoose_db.close()
-  });
-  
-  afterEach(async () => {
+    setupMongoose(false);
   });
   
     /*
+  afterEach(async () => {
+  });
     // import { loginCookie } from '../../utils/domainBuilders'
     // import * as cookie from 'cookie';
   beforeEach(async done => {
@@ -66,11 +42,7 @@ describe('Domains', () => {
         .set({ 'Cookie': `saas-api.sid=${this.authCookie}` })
     */
 
-  /*
-   * Test the /GET route
-   */
   describe('/GET domain', () => {
-
     test('it should GET all the domains', async done => {
       this.serverAgent
         .get('/api/v1/domains')

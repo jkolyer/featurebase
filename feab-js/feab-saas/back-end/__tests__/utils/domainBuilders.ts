@@ -1,3 +1,4 @@
+import * as mongoose from 'mongoose';
 import { Domain } from '../../server/models/Domain';
 import { DomainRole } from '../../server/models/DomainRole';
 import Team from '../../server/models/Team';
@@ -83,11 +84,41 @@ const loginCookie = (serverAgent, done) => {
     });
 };
 
+const flushDocuments = async () => {
+    await User.remove({});
+    await Team.remove({});
+    await Domain.remove({});
+    await DomainRole.remove({});
+};
+
+let mongoose_db = null;
+
+const setupMongoose = async (isUp) => {
+  if (isUp) {
+    const mongo_options = {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useFindAndModify: true,
+    };
+    mongoose_db = await mongoose.connect(process.env.MONGO_URL_TEST, mongo_options);
+    await flushDocuments();
+    
+  } else {
+    if (mongoose_db) {
+      await flushDocuments();
+      await mongoose_db.close()
+      mongoose_db = null;
+    }
+  }
+};
+
 export {
   buildDomain,
   buildDomainRole,
   buildDomainAndRole,
+  flushDocuments,
   loginCookie,
   owner,
   ownerTeam,
+  setupMongoose,
 };
