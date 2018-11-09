@@ -42,9 +42,11 @@ interface IDomainModel extends mongoose.Model<IDomainDocument> {
   getList({
     userId,
     teamId,
+    slug,
   }: {
     userId: string;
     teamId: string;
+    slug: string;
   }): Promise<{ domains: IDomainDocument[] }>;
 
   add({
@@ -93,7 +95,7 @@ class DomainClass extends mongoose.Model {
     return { team };
   }
 
-  public static async getList({ userId, teamId }) {
+  public static async getList({ userId, teamId, slug }) {
     // await this.checkPermission({ userId, teamId });
 
     const user = await User.findOne({ _id: userId });
@@ -118,6 +120,9 @@ class DomainClass extends mongoose.Model {
     }
 
     const filter: any = { teamId };
+    if (slug) {
+      filter.slug = slug;
+    }
     const domains: any[] = await this.find(filter,
                                            null,
                                            { sort: { name: 1 }}).lean();

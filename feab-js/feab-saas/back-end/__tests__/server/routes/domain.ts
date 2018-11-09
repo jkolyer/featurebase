@@ -87,5 +87,29 @@ describe('Domains', () => {
           return done();
         });
     });
+
+    test('it should GET domain by slug', async done => {
+      this.serverAgent
+        .get(`/api/v1/domains?id=adhoc`)
+        .set({ 'Cookie': `saas-api.sid=${this.authCookie}` })
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(err);
+
+          expect(200);
+          
+          const resJson = res.body;
+          // logger.debug(`*** domain request: res = ${resJson}`)
+          expect(resJson.domains.length).toBe(1);
+
+          const d1 = resJson.domains[0]
+          expect(d1.name).toBe('Adhoc');
+          expect(d1.slug).toBe('adhoc');
+          
+          return done();
+        });
+    });
+    
   });
 });
