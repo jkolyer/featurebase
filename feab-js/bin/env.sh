@@ -60,10 +60,11 @@ function dolint {
 
 function jest_back {
     visit_dir $FEAB_BACK
-    yarn test $1
+    yarn test "$@"
 }
 
 function jest_back_debug {
     visit_dir $FEAB_BACK
+    # DEBUG=express:* 
     node inspect ./node_modules/jest-cli/bin/jest.js "$@"
 }
