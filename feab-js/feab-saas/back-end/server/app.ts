@@ -29,7 +29,7 @@ const MONGO_URL = dev ? process.env.MONGO_URL_DEV : process.env.MONGO_URL;
 const options = {
   useNewUrlParser: true,
   useCreateIndex: true,
-  useFindAndModify: false,
+  useFindAndModify: true,
 };
 
 mongoose.connect(
