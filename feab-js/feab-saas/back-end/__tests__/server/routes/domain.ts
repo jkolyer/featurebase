@@ -75,6 +75,14 @@ describe('Domains', () => {
           const resJson = res.body;
           // logger.debug(`*** domain request: res = ${resJson}`)
           expect(resJson.domains.length).toBe(2);
+
+          const d1 = resJson.domains[0]
+          expect(d1.name).toBe('Adhoc');
+          expect(d1.slug).toBe('adhoc');
+          
+          const d2 = resJson.domains[1]
+          expect(d2.name).toBe('Site');
+          expect(d2.slug).toBe('site');
           
           return done();
         });
