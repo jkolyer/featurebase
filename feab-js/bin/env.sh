@@ -66,5 +66,5 @@ function jest_back {
 function jest_back_debug {
     visit_dir $FEAB_BACK
     # DEBUG=express:* 
-    node inspect ./node_modules/jest-cli/bin/jest.js "$@"
+    node inspect ./node_modules/jest-cli/bin/jest.js "$@"  --colors
 }
