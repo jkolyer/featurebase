@@ -29,14 +29,14 @@ const owner = async (email: string = null) => {
 };
 
 const ownerTeam = async domainOwner => {
-  let tm = await Team.findOne({ teamLeaderId: domainOwner.id });
+  let tm = await Team.findOne({ teamLeaderId: domainOwner._id });
   if (tm) {
     return tm;
   }
 
   const defaultTeam = true;
   const slug = await generateNumberSlug(Team);
-  const userId = domainOwner.id;
+  const userId = domainOwner._id;
 
   tm = await Team.create({
     teamLeaderId: userId,
@@ -54,9 +54,9 @@ const buildDomain = async (dname: string, email: string = null) => {
   const domainOwner = await owner(email);
   const domainTeam = await ownerTeam(domainOwner);
 
-  const domain = await Domain.add({ userId: domainOwner.id,
+  const domain = await Domain.add({ userId: domainOwner._id,
                                     name: dname,
-                                    teamId: domainTeam.id });
+                                    teamId: domainTeam._id });
   return domain;
 };
 

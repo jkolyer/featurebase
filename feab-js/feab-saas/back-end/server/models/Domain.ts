@@ -104,12 +104,11 @@ class DomainClass extends mongoose.Model {
         };
     }
     if (!teamId) {
-
       const teams = await Team.find({ teamLeaderId: userId },
                                     null,
                                     { sort: { name: 1 }}).lean();
       if (teams.length > 0) {
-        teamId = teams[0].id;
+        teamId = teams[0]._id;
       } else {
         throw {
           name: '',
@@ -122,7 +121,6 @@ class DomainClass extends mongoose.Model {
     const domains: any[] = await this.find(filter,
                                            null,
                                            { sort: { name: 1 }}).lean();
-
     return { domains };
   }
 

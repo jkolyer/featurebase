@@ -7,6 +7,8 @@ import 'jest';
 import { app } from '../../../server/app';
 import { Domain } from '../../../server/models/Domain';
 import { DomainRole } from '../../../server/models/DomainRole';
+import Team from '../../../server/models/Team';
+import User from '../../../server/models/User';
 import { buildDomain, loginCookie } from '../../utils/domainBuilders'
 import * as mongoose from 'mongoose';
 import * as supertest from 'supertest';
@@ -22,6 +24,8 @@ describe('Domains', () => {
   beforeAll(async () => {
     await mongoose.connect(process.env.MONGO_URL_TEST);
     
+    await User.remove({});
+    await Team.remove({});
     await Domain.remove({});
     await DomainRole.remove({});
 
@@ -32,6 +36,8 @@ describe('Domains', () => {
   });
   
   afterAll(async () => {
+    await User.remove({});
+    await Team.remove({});
     await Domain.remove({});
     await DomainRole.remove({});
   });
@@ -60,10 +66,16 @@ describe('Domains', () => {
         .get('/api/v1/domains')
         .set({ 'Cookie': `saas-api.sid=${this.authCookie}` })
         .expect(200)
-        .end((err, _) => {
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
           if (err) return done(err);
-          // logger.debug(`*** domain request: res = ${JSON.stringify(res,null,2)}`)
+
           expect(200);
+          
+          const resJson = res.body;
+          // logger.debug(`*** domain request: res = ${resJson}`)
+          expect(resJson.domains.length).toBe(2);
+          
           return done();
         });
     });

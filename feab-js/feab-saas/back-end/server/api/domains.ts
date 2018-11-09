@@ -10,8 +10,9 @@ router.use(ensureAuthenticated);
 
 router.get('/', async (req, res, next) => {
   try {
-    const teamId = null; // req.team ? req.team.id : null;
+    const teamId = req.query.team_id;
     const domains = await Domain.getList({ userId: req.user.id, teamId });
+
     res.json(domains);
   } catch (err) {
     next(err);

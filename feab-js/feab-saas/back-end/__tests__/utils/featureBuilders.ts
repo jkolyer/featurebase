@@ -5,7 +5,7 @@ let guestDomainRole = function() {
   return async () => {
     const adminRole = await buildDomainAndRole('Site', 'Admin');
     const siteDomain = adminRole.domain
-    const guestRole = await buildDomainRole('Guest', siteDomain, adminRole.id);
+    const guestRole = await buildDomainRole('Guest', siteDomain, adminRole._id);
     return guestRole;
   }
 }();
