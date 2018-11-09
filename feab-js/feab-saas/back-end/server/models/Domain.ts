@@ -70,7 +70,13 @@ interface IDomainModel extends mongoose.Model<IDomainDocument> {
     name: string;
   }): Promise<IDomainDocument>;
 
-  delete({ userId, id }: { userId: string; id: string }): Promise<{ teamId: string }>;
+  delete({
+    userId,
+    domainId,
+  }: {
+    userId: string;
+    domainId: string;
+  }): Promise<IDomainDocument>;
 }
 
 class DomainClass extends mongoose.Model {
@@ -197,23 +203,20 @@ class DomainClass extends mongoose.Model {
     return { domain };
   }
 
-  public static async delete({ userId, id }) {
-    if (!id) {
+  public static async delete({ userId, domainId }) {
+    if (!domainId) {
       throw {
         name: 'DomainDeleteError',
         message: 'missing domain identifier',
       };
     }
+    logger.debug(`*** Domain.delete:  ${userId}; ${domainId}`);
 
-    const domain = await this.findById(id)
-      .select('teamId')
-      .lean();
+    const domain = await this.findById(domainId);
+    // await this.checkPermission({ userId, teamId: domain.teamId });
 
-    await this.checkPermission({ userId, teamId: domain.teamId });
-
-    await this.deleteOne({ _id: id });
-
-    return { teamId: domain.teamId };
+    await this.deleteOne({ _id: domainId });
+    return { domain };
   }
 
   public static findBySlug(teamId: string, slug: string) {

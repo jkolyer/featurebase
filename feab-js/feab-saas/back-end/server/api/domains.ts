@@ -58,23 +58,18 @@ router.put('/:domainId', async (req, res, next) => {
   }
 });
 
-/*
-router.post('/domains/update', async (req, res, next) => {
+router.delete('/:domainId', async (req, res, next) => {
   try {
-    const { domainId, name, avatarUrl } = req.body;
-
-    const domain = await Domain.updateDomain({
-      userId: req.user.id,
-      domainId,
-      name,
-      avatarUrl,
-    });
-
+    const domainId = req.params.domainId;
+    const domain = await Domain.delete({ userId: req.user.id, domainId });
     res.json(domain);
+
   } catch (err) {
     next(err);
   }
 });
+
+/*
 
 router.get('/domains/get-roles', async (req, res, next) => {
   try {

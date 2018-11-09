@@ -157,7 +157,37 @@ describe('Domains', () => {
           
           return done();
         });
+    });    
+  });
+  
+  describe('/DELETE domain', () => {
+    test('it should DELETE domain', async done => {
+      this.serverAgent
+        .post(`/api/v1/domains`)
+        .send({ name: 'Temporary Domain' })
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(err);
+          expect(200);
+          
+          let domain = res.body;
+          const domainId = domain._id
+          
+          this.serverAgent
+            .delete(`/api/v1/domains/${domainId}`)
+            .expect(200)
+            .expect('Content-Type', /json/)
+            .end((err, res) => {
+              if (err) return done(err);
+              expect(200);
+              
+              domain = res.body.domain;
+              expect(domain._id).toBe(domainId);
+              
+              return done();
+            });
+        });
     });
-    
   });
 });
