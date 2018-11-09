@@ -60,7 +60,7 @@ function dolint {
 
 function jest_back {
     visit_dir $FEAB_BACK
-    yarn test "$@"
+    yarn test "$@" --colors
 }
 
 function jest_back_debug {
