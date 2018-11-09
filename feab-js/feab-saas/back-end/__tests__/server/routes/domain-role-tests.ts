@@ -29,7 +29,8 @@ describe('Domain Roles', () => {
     docRefs.basicRole = basicRole;
     
     const guestRole = await buildDomainAndRole('Site', 'Guest');
-    docRefs.siteDomain = guestRole.domain
+    docRefs.guestRole = guestRole;
+    docRefs.siteDomain = guestRole.domain;
     
     await buildDomainRole('User', docRefs.siteDomain, null);
     // logger.debug(`*** beforeAll:  ${userRole}`)
@@ -46,6 +47,11 @@ describe('Domain Roles', () => {
       expect(docRefs.superRole.parent).toBe(null);
       expect(docRefs.premiumRole.parent).toBe(docRefs.superRole);
       expect(docRefs.basicRole.parent).toBe(docRefs.premiumRole);
+      
+      expect(docRefs.superRole.domain).toBe(docRefs.adhocDomain);
+      
+      expect(docRefs.guestRole.parent).toBe(null);
+      
       done();
     });
   });
@@ -71,6 +77,27 @@ describe('Domain Roles', () => {
           
           expect(roles[0].name).toBe('Guest');
           expect(roles[1].name).toBe('User');
+          
+          return done();
+        });
+    });
+
+    test('it should GET specific domain role', async done => {
+      this.serverAgent
+        .get(`/api/v1/domains/${docRefs.adhocDomain.id}/roles/${docRefs.superRole.id}`)
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(err);
+          expect(200);
+
+          const result = res.body
+
+          const domain = result.domain;
+          expect(domain.name).toBe('Adhoc');
+
+          const role = result.role;
+          expect(role.name).toBe('Super User');
           
           return done();
         });

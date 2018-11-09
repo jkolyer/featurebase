@@ -22,6 +22,20 @@ router.get('/:domainId/roles', async (req, res, next) => {
   }
 });
 
+router.get('/:domainId/roles/:roleId', async (req, res, next) => {
+  try {
+    const teamId = req.query.team_id;
+    const domainId = req.params.domainId;
+    const roleId = req.params.roleId;
+    const domain = await Domain.getDomain({ userId: req.user.id, teamId, domainId });
+    const role = await DomainRole.getRole({ domain, roleId });
+    res.json({ domain, role });
+
+  } catch (err) {
+    next(err);
+  }
+});
+
 /*
 router.get('/:slug', async (req, res, next) => {
   try {
