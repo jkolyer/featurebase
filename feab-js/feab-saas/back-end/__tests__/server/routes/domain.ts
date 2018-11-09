@@ -19,7 +19,8 @@ jest.mock('../../../server/api/ensureAuthenticated');
 
 // Our parent block
 describe('Domains', () => {
-  let mongoose_db
+  let mongoose_db;
+  let siteDomain;
   
   beforeAll(async () => {
     const mongo_options = {
@@ -34,7 +35,7 @@ describe('Domains', () => {
     await Domain.remove({});
     await DomainRole.remove({});
 
-    await buildDomain('Site');
+    siteDomain = await buildDomain('Site');
     await buildDomain('Adhoc');
 
     this.serverAgent = supertest.agent(app);
@@ -62,6 +63,7 @@ describe('Domains', () => {
       done();
     });
   });
+        .set({ 'Cookie': `saas-api.sid=${this.authCookie}` })
     */
 
   /*
@@ -72,7 +74,6 @@ describe('Domains', () => {
     test('it should GET all the domains', async done => {
       this.serverAgent
         .get('/api/v1/domains')
-        .set({ 'Cookie': `saas-api.sid=${this.authCookie}` })
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -98,12 +99,10 @@ describe('Domains', () => {
     test('it should GET domain by slug', async done => {
       this.serverAgent
         .get(`/api/v1/domains/adhoc`)
-        .set({ 'Cookie': `saas-api.sid=${this.authCookie}` })
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
-
           expect(200);
           
           const resJson = res.body;
@@ -112,6 +111,49 @@ describe('Domains', () => {
           const d1 = resJson.domains[0]
           expect(d1.name).toBe('Adhoc');
           expect(d1.slug).toBe('adhoc');
+          
+          return done();
+        });
+    });
+  });
+  
+  describe('/POST domain', () => {
+    test('it should POST new domain with name', async done => {
+      this.serverAgent
+        .post(`/api/v1/domains`)
+        .send({ name: 'Muh Domain' })
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(err);
+          expect(200);
+          
+          const d1 = res.body;
+          expect(d1).not.toBe(null);
+          expect(d1.name).toBe('Muh Domain');
+          expect(d1.slug).toBe('muh-domain');
+          
+          return done();
+        });
+    });
+  });
+
+  describe('/PUT domain', () => {
+    test('it should PUT new domain name', async done => {
+      const putUrl = `/api/v1/domains/${siteDomain._id}`
+      this.serverAgent
+        .put(putUrl)
+        .send({ name: 'Muh Site' })
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(err);
+          expect(200);
+          
+          const { domain } = res.body;
+          expect(domain).not.toBe(null);
+          expect(domain.name).toBe('Muh Site');
+          expect(domain.slug).toBe('muh-site');
           
           return done();
         });

@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 
+import logger from '../logs';
 import { generateSlug } from '../utils/slugify';
 import Team from './Team';
 import User from './User';
@@ -61,13 +62,13 @@ interface IDomainModel extends mongoose.Model<IDomainDocument> {
 
   edit({
     userId,
-    id,
+    domainId,
     name,
   }: {
     userId: string;
-    id: string;
+    domainId: string;
     name: string;
-  }): Promise<{ teamId: string }>;
+  }): Promise<IDomainDocument>;
 
   delete({ userId, id }: { userId: string; id: string }): Promise<{ teamId: string }>;
 }
@@ -95,9 +96,21 @@ class DomainClass extends mongoose.Model {
     return { team };
   }
 
-  public static async getList({ userId, teamId, slug }) {
-    // await this.checkPermission({ userId, teamId });
+  public static async deriveTeamId(userId) {
+      const teams = await Team.find({ teamLeaderId: userId },
+                                    null,
+                                    { sort: { name: 1 }}).lean();
+      if (teams.length > 0) {
+        return teams[0]._id;
+      } else {
+        throw {
+          name: 'DomainLookup',
+          message: 'missing team identifier',
+        };
+      }
+  }
 
+  public static async getList({ userId, teamId, slug }) {
     const user = await User.findOne({ _id: userId });
     if (!user) {
         throw {
@@ -106,17 +119,7 @@ class DomainClass extends mongoose.Model {
         };
     }
     if (!teamId) {
-      const teams = await Team.find({ teamLeaderId: userId },
-                                    null,
-                                    { sort: { name: 1 }}).lean();
-      if (teams.length > 0) {
-        teamId = teams[0]._id;
-      } else {
-        throw {
-          name: '',
-          message: '',
-        };
-      }
+      teamId = await this.deriveTeamId(userId);
     }
 
     const filter: any = { teamId };
@@ -137,8 +140,9 @@ class DomainClass extends mongoose.Model {
       };
     }
 
-    await this.checkPermission({ userId, teamId });
-
+    if (!teamId) {
+      teamId = await this.deriveTeamId(userId);
+    }
     const existing = await this.findOne({ userId, teamId, name });
     if (existing) {
       throw {
@@ -158,18 +162,17 @@ class DomainClass extends mongoose.Model {
     });
   }
 
-  public static async edit({ userId, id, name }) {
-    if (!id) {
+  public static async edit({ userId, domainId, name }) {
+    if (!domainId) {
       throw {
         name: 'DomainEditError',
         message: 'Missing domain identifier',
       };
     }
 
-    const domain = await this.findById(id)
-      .select('teamId userId')
-      .lean();
-
+    logger.debug(`*** Domain.edit:  ${userId}; ${domainId}; ${name}`);
+    /*
+    const domain = await this.findById(domainId)
     const { team } = await this.checkPermission({
       userId,
       teamId: domain.teamId,
@@ -181,15 +184,17 @@ class DomainClass extends mongoose.Model {
         message: 'Permission denied. Only create user or team leader can update.',
       };
     }
-
+    */
+    const slug = await generateSlug(this, name);
     await this.updateOne(
-      { _id: id },
+      { _id: domainId },
       {
         name,
+        slug,
       },
     );
-
-    return { teamId: domain.teamId };
+    const domain = await this.findById(domainId);
+    return { domain };
   }
 
   public static async delete({ userId, id }) {

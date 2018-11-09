@@ -32,21 +32,33 @@ router.get('/:slug', async (req, res, next) => {
   }
 });
 
-/*
-router.post('/domains/add', async (req, res, next) => {
+router.post('/', async (req, res, next) => {
   try {
-    const { name, avatarUrl } = req.body;
+    const { name } = req.body;
 
-    logger.debug(`Express route: ${name}, ${avatarUrl}`);
-
-    const domain = await Domain.add({ userId: req.user.id, name, avatarUrl });
-
+    const teamId = req.query.team_id;
+    const domain = await Domain.add({ userId: req.user.id, name, teamId });
     res.json(domain);
+
   } catch (err) {
     next(err);
   }
 });
 
+router.put('/:domainId', async (req, res, next) => {
+  try {
+    const { name } = req.body;
+
+    const domainId = req.params.domainId;
+    const domain = await Domain.edit({ userId: req.user.id, name, domainId });
+    res.json(domain);
+
+  } catch (err) {
+    next(err);
+  }
+});
+
+/*
 router.post('/domains/update', async (req, res, next) => {
   try {
     const { domainId, name, avatarUrl } = req.body;
