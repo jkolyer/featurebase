@@ -18,5 +18,9 @@
     "module": "commonjs",
     "outDir": "production-server/"
   },
-  "include": ["./server/**/*.ts"]
+  "include": ["./server/**/*.ts"],
+  "exclude": [
+    "**/__mocks__/*",
+    "**/__tests__/*",
+  ]
 }
