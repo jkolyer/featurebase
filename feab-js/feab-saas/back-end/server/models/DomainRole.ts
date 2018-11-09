@@ -41,10 +41,10 @@ interface IDomainRoleDocument extends mongoose.Document {
 
 interface IDomainRoleModel extends mongoose.Model<IDomainRoleDocument> {
   getList({
-    domainId,
+    domain,
   }: {
-    domainId: string;
-  }): Promise<{ domainRoles: IDomainRoleDocument[] }>;
+    domain: IDomainDocument;
+  }): Promise<IDomainRoleDocument[]>;
 
   add({
     name,
@@ -71,6 +71,15 @@ interface IDomainRoleModel extends mongoose.Model<IDomainRoleDocument> {
 }
 
 class DomainRoleClass extends mongoose.Model {
+
+  public static async getList({ domain }) {
+    const filter: any = { domain };
+    const roles: any[] = await this.find(filter,
+                                         null,
+                                         { sort: { name: 1 }}).lean();
+    return roles;
+  }
+
   public static async add({ name, domain, parent }) {
     if (!name) {
       throw {

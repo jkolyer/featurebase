@@ -2,6 +2,7 @@ import * as express from 'express';
 
 // import logger from '../logs';
 import { Domain } from '../models/Domain';
+import { DomainRole } from '../models/DomainRole';
 import { ensureAuthenticated } from './ensureAuthenticated';
 
 const router = express.Router();
@@ -13,7 +14,8 @@ router.get('/:domainId/roles', async (req, res, next) => {
     const teamId = req.query.team_id;
     const domainId = req.params.domainId;
     const domain = await Domain.getDomain({ userId: req.user.id, teamId, domainId });
-    res.json(domain);
+    const roles = await DomainRole.getList({ domain });
+    res.json({ domain, roles });
 
   } catch (err) {
     next(err);

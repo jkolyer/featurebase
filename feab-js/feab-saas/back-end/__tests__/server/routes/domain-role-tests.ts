@@ -8,7 +8,7 @@ import { buildDomainAndRole,
          setupMongoose } from '../../utils/domainBuilders'
 import * as supertest from 'supertest';
 
-import { logger } from '../../../server/utils/logs';
+// import { logger } from '../../../server/utils/logs';
 
 jest.mock('../../../server/api/ensureAuthenticated');
 
@@ -20,8 +20,8 @@ describe('Domains', () => {
     
     const guestRole = await buildDomainAndRole('Site', 'Guest');
     siteDomain = guestRole.domain
-    const userRole = await buildDomainRole('User', siteDomain, null);
-    logger.debug(`*** beforeAll:  ${userRole}`)
+    await buildDomainRole('User', siteDomain, null);
+    // logger.debug(`*** beforeAll:  ${userRole}`)
     
     this.serverAgent = supertest.agent(app);
   });
@@ -39,9 +39,18 @@ describe('Domains', () => {
         .end((err, res) => {
           if (err) return done(err);
           expect(200);
-          
-          const domain = res.body.domain;
+
+          const result = res.body
+
+          const domain = result.domain;
           expect(domain).not.toBe(null);
+          expect(domain.name).toBe('Site');
+          
+          const roles = result.roles;
+          expect(roles.length).toBe(2);
+          
+          expect(roles[0].name).toBe('Guest');
+          expect(roles[1].name).toBe('User');
           
           return done();
         });
