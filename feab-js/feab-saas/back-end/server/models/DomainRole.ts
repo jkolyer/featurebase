@@ -75,10 +75,12 @@ interface IDomainRoleModel extends mongoose.Model<IDomainRoleDocument> {
   }): Promise<IDomainRoleDocument>;
 
   delete({
-    domainRole,
+    domain,
+    roleId,
   }: {
-    domainRole: IDomainRoleDocument;
-  }): Promise<{ parentId: string }>;
+    domain: IDomainDocument;
+    roleId: string;
+  }): Promise<IDomainRoleDocument>;
 
   findChildren({
     domainRole,
@@ -151,17 +153,24 @@ class DomainRoleClass extends mongoose.Model {
     return role;
   }
 
-  public static async delete({ domainRole }) {
-    if (!domainRole) {
+  public static async delete({ domain, roleId }) {
+    if (!roleId || !domain) {
       throw {
-        name: 'DomainRoleDelete',
+        name: 'DomainRoleDeleteError',
         message: 'Missing identifier',
       };
     }
-    const roleParent = domainRole.parent;
+    const role = await this.findOne({ domain, _id: roleId });
+    if (!role) {
+      throw {
+        name: 'DomainRoleDeleteError',
+        message: 'unknown role',
+      };
+    }
+    const roleParent = role.parent;
 
     // update parent of all children
-    const filter: any = { parent: domainRole };
+    const filter: any = { parent: role };
     const domainRoles: any[] = await this.find(filter);
 
     for (const dRole of domainRoles) {
@@ -170,9 +179,9 @@ class DomainRoleClass extends mongoose.Model {
         { parent: roleParent },
       );
     }
-    await this.deleteOne({ _id: domainRole.id });
+    await this.deleteOne({ _id: roleId });
 
-    return { parent: roleParent };
+    return { roleId };
   }
 
   public static findBySlug(domain: IDomainDocument, slug: string) {

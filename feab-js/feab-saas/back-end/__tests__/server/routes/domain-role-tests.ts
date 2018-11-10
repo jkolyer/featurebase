@@ -171,36 +171,33 @@ describe('Domain Roles', () => {
     });    
   });
   
-  /*
-  describe('/DELETE domain', () => {
-    test('it should DELETE domain', async done => {
+  describe('/DELETE domain-role', () => {
+    test('it should DELETE domain-role', async done => {
+      const domainId = docRefs.siteDomain.id;
       this.serverAgent
-        .post(`/api/v1/domains`)
-        .send({ name: 'Temporary Domain' })
+        .post(`/api/v1/domains/${domainId}/roles`)
+        .send({ name: 'Temporary Domain Role' })
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
           expect(200);
           
-          let domain = res.body;
-          const domainId = domain._id
-          
+          const result = res.body
+          let role = result.role;
+          const roleId = role._id;
           this.serverAgent
-            .delete(`/api/v1/domains/${domainId}`)
+            .delete(`/api/v1/domains/${domainId}/roles/${roleId}`)
             .expect(200)
             .expect('Content-Type', /json/)
             .end((err, res) => {
               if (err) return done(err);
               expect(200);
-              
-              domain = res.body.domain;
-              expect(domain._id).toBe(domainId);
+              expect(res.body.roleId).toBe(roleId);
               
               return done();
             });
         });
     });
   });
-  */
 });
