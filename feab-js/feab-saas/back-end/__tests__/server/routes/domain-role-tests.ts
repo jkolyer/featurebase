@@ -31,8 +31,9 @@ describe('Domain Roles', () => {
     const guestRole = await buildDomainAndRole('Site', 'Guest');
     docRefs.guestRole = guestRole;
     docRefs.siteDomain = guestRole.domain;
+    docRefs.adminRole = await buildDomainRole('Admin', docRefs.siteDomain, null);
     
-    await buildDomainRole('User', docRefs.siteDomain, null);
+    docRefs.userRole = await buildDomainRole('User', docRefs.siteDomain, null);
     // logger.debug(`*** beforeAll:  ${userRole}`)
     
     this.serverAgent = supertest.agent(app);
@@ -73,10 +74,11 @@ describe('Domain Roles', () => {
           expect(domain.name).toBe('Site');
           
           const roles = result.roles;
-          expect(roles.length).toBe(2);
+          expect(roles.length).toBe(3);
           
-          expect(roles[0].name).toBe('Guest');
-          expect(roles[1].name).toBe('User');
+          expect(roles[0].name).toBe('Admin');
+          expect(roles[1].name).toBe('Guest');
+          expect(roles[2].name).toBe('User');
           
           return done();
         });
@@ -129,7 +131,7 @@ describe('Domain Roles', () => {
   });
 
   describe('/PUT domain role', () => {
-    test('it should PUT new domain-role ', async done => {
+    test('it should PUT new domain-role name', async done => {
       const putUrl = `/api/v1/domains/${docRefs.siteDomain.id}/roles/${docRefs.guestRole.id}`
       this.serverAgent
         .put(putUrl)
@@ -144,6 +146,25 @@ describe('Domain Roles', () => {
           const role = result.role;
           expect(role.name).toBe('Visitor');
           expect(role.parent).toBe(null);
+          
+          return done();
+        });
+    });    
+    test('it should PUT new domain-role parent', async done => {
+      const putUrl = `/api/v1/domains/${docRefs.siteDomain.id}/roles/${docRefs.guestRole.id}`
+      this.serverAgent
+        .put(putUrl)
+        .send({ name: 'Anonymous', parentId: docRefs.adminRole.id })
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(err);
+          expect(200);
+          
+          const result = res.body;
+          const role = result.role;
+          expect(role.name).toBe('Anonymous');
+          expect(role.parent).toBe(docRefs.adminRole.id);
           
           return done();
         });
