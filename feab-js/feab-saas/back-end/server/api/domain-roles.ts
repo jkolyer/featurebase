@@ -89,7 +89,8 @@ router.delete('/:domainId/roles/:roleId', async (req, res, next) => {
     const domain = await Domain.getDomain({ userId: req.user.id, teamId, domainId });
 
     if (domain) {
-      const role = await DomainRole.delete({ domain, roleId });
+      // TODO: validate role delete permission
+      const role = await DomainRole.delete({ roleId });
       res.json(role);
     } else {
       // TODO:  throw error

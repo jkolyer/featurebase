@@ -106,16 +106,23 @@ const setupMongoose = async (isUp) => {
   } else {
     if (mongoose_db) {
       await flushDocuments();
-      await mongoose_db.close()
+      // if (mongoose_db) {
+      //   await mongoose_db.close()
+      // }
       mongoose_db = null;
     }
   }
+};
+
+const findDomainRole = async (slug: string) => {
+  return await DomainRole.findBySlug({ slug });
 };
 
 export {
   buildDomain,
   buildDomainRole,
   buildDomainAndRole,
+  findDomainRole,
   flushDocuments,
   loginCookie,
   owner,

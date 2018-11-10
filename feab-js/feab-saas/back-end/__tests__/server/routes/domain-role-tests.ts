@@ -5,6 +5,7 @@ import 'jest';
 import { app } from '../../../server/app';
 import { buildDomainAndRole,
          buildDomainRole,
+         findDomainRole,
          setupMongoose } from '../../utils/domainBuilders'
 import * as supertest from 'supertest';
 
@@ -197,6 +198,24 @@ describe('Domain Roles', () => {
               
               return done();
             });
+        });
+    });
+    test('it should DELETE domain-role and update childs parent', async done => {
+      const domain = docRefs.siteDomain;
+      this.serverAgent
+        .delete(`/api/v1/domains/${domain.id}/roles/${docRefs.premiumRole.id}`)
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end(async (err, res) => {
+          if (err) return done(err);
+          expect(200);
+          expect(res.body.roleId).toBe(docRefs.premiumRole.id);
+
+          const superRole = await findDomainRole('super-user');
+          const basicRole = await findDomainRole('basic-user');
+          expect(basicRole.parent).toEqual(superRole._id);
+
+          done();
         });
     });
   });
