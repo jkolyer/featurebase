@@ -36,32 +36,29 @@ router.get('/:domainId/roles/:roleId', async (req, res, next) => {
   }
 });
 
+router.post('/:domainId/roles', async (req, res, next) => {
+  try {
+    const { name, parentId } = req.body;
+
+    const teamId = req.query.team_id;
+    const domainId = req.params.domainId;
+    const domain = await Domain.getDomain({ userId: req.user.id, teamId, domainId });
+
+    let parent: any = null;
+    if (parentId) {
+      parent = await DomainRole.getRole({ domain, roleId: parentId });
+      // TODO:  bail out if no parent
+    }
+    const role = await DomainRole.add({ domain, name, parent });
+
+    res.json({ domain, role });
+
+  } catch (err) {
+    next(err);
+  }
+});
+
 /*
-router.get('/:slug', async (req, res, next) => {
-  try {
-    const teamId = req.query.team_id;
-    const slug = req.params.slug;
-
-    const domains = await Domain.getList({ userId: req.user.id, teamId, slug });
-    res.json(domains);
-
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.post('/', async (req, res, next) => {
-  try {
-    const { name } = req.body;
-
-    const teamId = req.query.team_id;
-    const domain = await Domain.add({ userId: req.user.id, name, teamId });
-    res.json(domain);
-
-  } catch (err) {
-    next(err);
-  }
-});
 
 router.put('/:domainId', async (req, res, next) => {
   try {

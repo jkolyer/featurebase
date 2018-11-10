@@ -103,27 +103,32 @@ describe('Domain Roles', () => {
         });
     });
   });
-  /*
-  describe('/POST domain', () => {
-    test('it should POST new domain with name', async done => {
+
+  describe('/POST domain role', () => {
+    test('it should POST new domain role with name', async done => {
       this.serverAgent
-        .post(`/api/v1/domains`)
-        .send({ name: 'Muh Domain' })
+        .post(`/api/v1/domains/${docRefs.siteDomain.id}/roles`)
+        .send({ name: 'Bot', parentId: docRefs.guestRole.id })
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
           expect(200);
           
-          const d1 = res.body;
-          expect(d1).not.toBe(null);
-          expect(d1.name).toBe('Muh Domain');
-          expect(d1.slug).toBe('muh-domain');
+          const result = res.body
+
+          const domain = result.domain;
+          expect(domain.name).toBe('Site');
+
+          const role = result.role;
+          expect(role.name).toBe('Bot');
+          expect(role.parent).toBe(docRefs.guestRole.id);
           
           return done();
         });
     });
   });
+  /*
 
   describe('/PUT domain', () => {
     test('it should PUT new domain name', async done => {
