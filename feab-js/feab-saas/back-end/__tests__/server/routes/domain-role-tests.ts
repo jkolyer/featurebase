@@ -116,7 +116,6 @@ describe('Domain Roles', () => {
           expect(200);
           
           const result = res.body
-
           const domain = result.domain;
           expect(domain.name).toBe('Site');
 
@@ -128,30 +127,30 @@ describe('Domain Roles', () => {
         });
     });
   });
-  /*
 
-  describe('/PUT domain', () => {
-    test('it should PUT new domain name', async done => {
-      const putUrl = `/api/v1/domains/${siteDomain._id}`
+  describe('/PUT domain role', () => {
+    test('it should PUT new domain-role ', async done => {
+      const putUrl = `/api/v1/domains/${docRefs.siteDomain.id}/roles/${docRefs.guestRole.id}`
       this.serverAgent
         .put(putUrl)
-        .send({ name: 'Muh Site' })
+        .send({ name: 'Visitor' })
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
           expect(200);
           
-          const { domain } = res.body;
-          expect(domain).not.toBe(null);
-          expect(domain.name).toBe('Muh Site');
-          expect(domain.slug).toBe('muh-site');
+          const result = res.body;
+          const role = result.role;
+          expect(role.name).toBe('Visitor');
+          expect(role.parent).toBe(null);
           
           return done();
         });
     });    
   });
   
+  /*
   describe('/DELETE domain', () => {
     test('it should DELETE domain', async done => {
       this.serverAgent

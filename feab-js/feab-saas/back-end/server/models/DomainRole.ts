@@ -64,6 +64,16 @@ interface IDomainRoleModel extends mongoose.Model<IDomainRoleDocument> {
     parent: IDomainRoleDocument;
   }): Promise<IDomainRoleDocument>;
 
+  edit({
+    roleId,
+    name,
+    parent,
+  }: {
+    roleId: string;
+    name: string;
+    parent: IDomainRoleDocument;
+  }): Promise<IDomainRoleDocument>;
+
   delete({
     domainRole,
   }: {
@@ -118,6 +128,27 @@ class DomainRoleClass extends mongoose.Model {
       slug,
       createdAt: new Date(),
     });
+  }
+
+  public static async edit({ roleId, name, parent }) {
+    if (!roleId) {
+      throw {
+        name: 'DomainRoleEditError',
+        message: 'Missing role identifier',
+      };
+    }
+
+    const slug = await generateSlug(this, name);
+    await this.updateOne(
+      { _id: roleId },
+      {
+        name,
+        slug,
+        parent,
+      },
+    );
+    const role = await this.findById(roleId);
+    return role;
   }
 
   public static async delete({ domainRole }) {

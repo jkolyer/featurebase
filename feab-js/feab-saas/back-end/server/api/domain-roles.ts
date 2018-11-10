@@ -58,21 +58,30 @@ router.post('/:domainId/roles', async (req, res, next) => {
   }
 });
 
-/*
-
-router.put('/:domainId', async (req, res, next) => {
+router.put('/:domainId/roles/:roleId', async (req, res, next) => {
   try {
-    const { name } = req.body;
+    const { name, parentId } = req.body;
 
+    const teamId = req.query.team_id;
     const domainId = req.params.domainId;
-    const domain = await Domain.edit({ userId: req.user.id, name, domainId });
-    res.json(domain);
+    const roleId = req.params.roleId;
+    const domain = await Domain.getDomain({ userId: req.user.id, teamId, domainId });
+
+    let parent: any = null;
+    if (parentId) {
+      parent = await DomainRole.getRole({ domain, roleId: parentId });
+      // TODO:  bail out if no parent
+    }
+    const role = await DomainRole.edit({ roleId, name, parent });
+
+    res.json({ domain, role });
 
   } catch (err) {
     next(err);
   }
 });
 
+/*
 router.delete('/:domainId', async (req, res, next) => {
   try {
     const domainId = req.params.domainId;
